@@ -31,7 +31,6 @@ typedef std::bitset<8> bits;
  *     \@customize(true);  // see the generated C++ header for more info
  *     int Seq_Num;
  *     int M_Type;
- *     int Peer;
  *     int dst;
  *     string M_Payload;
  *     bits mycheckbits;
@@ -67,7 +66,6 @@ class MyMessage_Base : public ::omnetpp::cPacket
   protected:
     int Seq_Num;
     int M_Type;
-    int Peer;
     int dst;
     ::omnetpp::opp_string M_Payload;
     bits mycheckbits;
@@ -87,7 +85,8 @@ class MyMessage_Base : public ::omnetpp::cPacket
   public:
     MyMessage_Base(const char *name=nullptr, short kind=0);
     virtual ~MyMessage_Base();
-    virtual MyMessage_Base *dup() const override {throw omnetpp::cRuntimeError("You forgot to manually add a dup() function to class MyMessage");}
+    virtual MyMessage_Base *dup() const override {
+        return new MyMessage_Base(*this);}
     virtual void parsimPack(omnetpp::cCommBuffer *b) const override;
     virtual void parsimUnpack(omnetpp::cCommBuffer *b) override;
 
@@ -96,8 +95,6 @@ class MyMessage_Base : public ::omnetpp::cPacket
     virtual void setSeq_Num(int Seq_Num);
     virtual int getM_Type() const;
     virtual void setM_Type(int M_Type);
-    virtual int getPeer() const;
-    virtual void setPeer(int Peer);
     virtual int getDst() const;
     virtual void setDst(int dst);
     virtual const char * getM_Payload() const;

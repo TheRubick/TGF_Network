@@ -181,7 +181,6 @@ MyMessage_Base::MyMessage_Base(const char *name, short kind) : ::omnetpp::cPacke
 {
     this->Seq_Num = 0;
     this->M_Type = 0;
-    this->Peer = 0;
     this->dst = 0;
 }
 
@@ -206,7 +205,6 @@ void MyMessage_Base::copy(const MyMessage_Base& other)
 {
     this->Seq_Num = other.Seq_Num;
     this->M_Type = other.M_Type;
-    this->Peer = other.Peer;
     this->dst = other.dst;
     this->M_Payload = other.M_Payload;
     this->mycheckbits = other.mycheckbits;
@@ -217,7 +215,6 @@ void MyMessage_Base::parsimPack(omnetpp::cCommBuffer *b) const
     ::omnetpp::cPacket::parsimPack(b);
     doParsimPacking(b,this->Seq_Num);
     doParsimPacking(b,this->M_Type);
-    doParsimPacking(b,this->Peer);
     doParsimPacking(b,this->dst);
     doParsimPacking(b,this->M_Payload);
     doParsimPacking(b,this->mycheckbits);
@@ -228,7 +225,6 @@ void MyMessage_Base::parsimUnpack(omnetpp::cCommBuffer *b)
     ::omnetpp::cPacket::parsimUnpack(b);
     doParsimUnpacking(b,this->Seq_Num);
     doParsimUnpacking(b,this->M_Type);
-    doParsimUnpacking(b,this->Peer);
     doParsimUnpacking(b,this->dst);
     doParsimUnpacking(b,this->M_Payload);
     doParsimUnpacking(b,this->mycheckbits);
@@ -252,16 +248,6 @@ int MyMessage_Base::getM_Type() const
 void MyMessage_Base::setM_Type(int M_Type)
 {
     this->M_Type = M_Type;
-}
-
-int MyMessage_Base::getPeer() const
-{
-    return this->Peer;
-}
-
-void MyMessage_Base::setPeer(int Peer)
-{
-    this->Peer = Peer;
 }
 
 int MyMessage_Base::getDst() const
@@ -360,7 +346,7 @@ const char *MyMessageDescriptor::getProperty(const char *propertyname) const
 int MyMessageDescriptor::getFieldCount() const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
-    return basedesc ? 6+basedesc->getFieldCount() : 6;
+    return basedesc ? 5+basedesc->getFieldCount() : 5;
 }
 
 unsigned int MyMessageDescriptor::getFieldTypeFlags(int field) const
@@ -376,10 +362,9 @@ unsigned int MyMessageDescriptor::getFieldTypeFlags(int field) const
         FD_ISEDITABLE,
         FD_ISEDITABLE,
         FD_ISEDITABLE,
-        FD_ISEDITABLE,
         FD_ISCOMPOUND,
     };
-    return (field>=0 && field<6) ? fieldTypeFlags[field] : 0;
+    return (field>=0 && field<5) ? fieldTypeFlags[field] : 0;
 }
 
 const char *MyMessageDescriptor::getFieldName(int field) const
@@ -393,12 +378,11 @@ const char *MyMessageDescriptor::getFieldName(int field) const
     static const char *fieldNames[] = {
         "Seq_Num",
         "M_Type",
-        "Peer",
         "dst",
         "M_Payload",
         "mycheckbits",
     };
-    return (field>=0 && field<6) ? fieldNames[field] : nullptr;
+    return (field>=0 && field<5) ? fieldNames[field] : nullptr;
 }
 
 int MyMessageDescriptor::findField(const char *fieldName) const
@@ -407,10 +391,9 @@ int MyMessageDescriptor::findField(const char *fieldName) const
     int base = basedesc ? basedesc->getFieldCount() : 0;
     if (fieldName[0]=='S' && strcmp(fieldName, "Seq_Num")==0) return base+0;
     if (fieldName[0]=='M' && strcmp(fieldName, "M_Type")==0) return base+1;
-    if (fieldName[0]=='P' && strcmp(fieldName, "Peer")==0) return base+2;
-    if (fieldName[0]=='d' && strcmp(fieldName, "dst")==0) return base+3;
-    if (fieldName[0]=='M' && strcmp(fieldName, "M_Payload")==0) return base+4;
-    if (fieldName[0]=='m' && strcmp(fieldName, "mycheckbits")==0) return base+5;
+    if (fieldName[0]=='d' && strcmp(fieldName, "dst")==0) return base+2;
+    if (fieldName[0]=='M' && strcmp(fieldName, "M_Payload")==0) return base+3;
+    if (fieldName[0]=='m' && strcmp(fieldName, "mycheckbits")==0) return base+4;
     return basedesc ? basedesc->findField(fieldName) : -1;
 }
 
@@ -426,11 +409,10 @@ const char *MyMessageDescriptor::getFieldTypeString(int field) const
         "int",
         "int",
         "int",
-        "int",
         "string",
         "bits",
     };
-    return (field>=0 && field<6) ? fieldTypeStrings[field] : nullptr;
+    return (field>=0 && field<5) ? fieldTypeStrings[field] : nullptr;
 }
 
 const char **MyMessageDescriptor::getFieldPropertyNames(int field) const
@@ -499,10 +481,9 @@ std::string MyMessageDescriptor::getFieldValueAsString(void *object, int field, 
     switch (field) {
         case 0: return long2string(pp->getSeq_Num());
         case 1: return long2string(pp->getM_Type());
-        case 2: return long2string(pp->getPeer());
-        case 3: return long2string(pp->getDst());
-        case 4: return oppstring2string(pp->getM_Payload());
-        //case 5: {std::stringstream out; out << pp->getMycheckbits(); return out.str();}
+        case 2: return long2string(pp->getDst());
+        case 3: return oppstring2string(pp->getM_Payload());
+        //case 4: {std::stringstream out; out << pp->getMycheckbits(); return out.str();}
         default: return "";
     }
 }
@@ -519,9 +500,8 @@ bool MyMessageDescriptor::setFieldValueAsString(void *object, int field, int i, 
     switch (field) {
         case 0: pp->setSeq_Num(string2long(value)); return true;
         case 1: pp->setM_Type(string2long(value)); return true;
-        case 2: pp->setPeer(string2long(value)); return true;
-        case 3: pp->setDst(string2long(value)); return true;
-        case 4: pp->setM_Payload((value)); return true;
+        case 2: pp->setDst(string2long(value)); return true;
+        case 3: pp->setM_Payload((value)); return true;
         default: return false;
     }
 }
@@ -535,7 +515,7 @@ const char *MyMessageDescriptor::getFieldStructName(int field) const
         field -= basedesc->getFieldCount();
     }
     switch (field) {
-        case 5: return omnetpp::opp_typename(typeid(bits));
+        case 4: return omnetpp::opp_typename(typeid(bits));
         default: return nullptr;
     };
 }
@@ -550,7 +530,7 @@ void *MyMessageDescriptor::getFieldStructValuePointer(void *object, int field, i
     }
     MyMessage_Base *pp = (MyMessage_Base *)object; (void)pp;
     switch (field) {
-        case 5: return (void *)(&pp->getMycheckbits()); break;
+        case 4: return (void *)(&pp->getMycheckbits()); break;
         default: return nullptr;
     }
 }

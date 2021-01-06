@@ -18,37 +18,33 @@
 
 Define_Module(Node);
 
-int peer_node = -1;
-
-
 void Node::initialize()
 {
 }
 
 void Node::handleMessage(cMessage *msg)
 {
-    if(strcmp(getName(), "start sender") == 0){
-        MyMessage_Base *mmsg = check_and_cast<MyMessage_Base *>(msg);
-        peer_node = mmsg->getPeer();
-        MyMessage_Base *nmsg = new MyMessage_Base("hello!!");
-        nmsg->setDst(peer_node);
-        send(nmsg, "out");
+    MyMessage_Base *mmsg = check_and_cast<MyMessage_Base *>(msg);
+    if(strcmp(mmsg->getName(), "start sender") == 0){
+        peer = mmsg->getDst();
+        std::stringstream ss;
+        ss << peer;
+        EV << "sender peer:::::::::"<< ss.str()<< "\n";
+        scheduleAt(simTime(), new MyMessage_Base(""));
 
     }else{
-        if(strcmp(getName(), "start receiver") == 0){
-            MyMessage_Base *mmsg = check_and_cast<MyMessage_Base *>(msg);
-            peer_node = mmsg->getPeer();
+        if(strcmp(mmsg->getName(), "start receiver") == 0){
+            peer = mmsg->getDst();
+            EV << "receiver peer:::::::::"<< peer;
         }else{
-            if(strcmp(getName(), "stop") == 0){
-                peer_node = -1;
-            }else{
                 //msg from another node
-                MyMessage_Base *mmsg = check_and_cast<MyMessage_Base *>(msg);
                 bubble("Message received");
-                MyMessage_Base *nmsg = new MyMessage_Base("hello!!");
-                nmsg->setDst(peer_node);
+                MyMessage_Base *nmsg = new MyMessage_Base("Data");
+                nmsg->setDst(peer);
+                std::stringstream ss;
+                ss << peer;
+                EV << "node peer:::::::::"<< ss.str()<< "\n";
                 send(nmsg, "out");
-            }
         }
     }
 }

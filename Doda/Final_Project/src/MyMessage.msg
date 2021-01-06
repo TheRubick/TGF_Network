@@ -28,7 +28,6 @@ packet MyMessage {
     @customize(true);  // see the generated C++ header for more info
     int Seq_Num;
     int M_Type;
-    int Peer;
     int dst;
     string M_Payload;
     bits mycheckbits;

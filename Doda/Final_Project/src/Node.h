@@ -25,6 +25,7 @@ using namespace omnetpp;
  */
 class Node : public cSimpleModule
 {
+  int peer = -1;
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
