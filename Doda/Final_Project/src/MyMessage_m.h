@@ -24,15 +24,16 @@ typedef std::bitset<8> bits;
 // }}
 
 /**
- * Class generated from <tt>MyMessage.msg:27</tt> by nedtool.
+ * Class generated from <tt>MyMessage.msg:28</tt> by nedtool.
  * <pre>
  * packet MyMessage
  * {
  *     \@customize(true);  // see the generated C++ header for more info
- *     int Seq_Num;
- *     int M_Type;
+ *     int seq;
+ *     int ack;
+ *     int type;
+ *     string payLoad;
  *     int dst;
- *     string M_Payload;
  *     bits mycheckbits;
  * }
  * </pre>
@@ -64,10 +65,11 @@ typedef std::bitset<8> bits;
 class MyMessage_Base : public ::omnetpp::cPacket
 {
   protected:
-    int Seq_Num;
-    int M_Type;
+    int seq;
+    int ack;
+    int type;
+    ::omnetpp::opp_string payLoad;
     int dst;
-    ::omnetpp::opp_string M_Payload;
     bits mycheckbits;
 
   private:
@@ -76,29 +78,31 @@ class MyMessage_Base : public ::omnetpp::cPacket
   protected:
     // protected and unimplemented operator==(), to prevent accidental usage
     bool operator==(const MyMessage_Base&);
-    // make constructors protected to avoid instantiation
 
     MyMessage_Base(const MyMessage_Base& other);
     // make assignment operator protected to force the user override it
     MyMessage_Base& operator=(const MyMessage_Base& other);
 
   public:
-    MyMessage_Base(const char *name=nullptr, short kind=0);
+    // make constructors protected to avoid instantiation
+        MyMessage_Base(const char *name=nullptr, short kind=0);
     virtual ~MyMessage_Base();
     virtual MyMessage_Base *dup() const override {
-        return new MyMessage_Base(*this);}
+            return new MyMessage_Base(*this); }
     virtual void parsimPack(omnetpp::cCommBuffer *b) const override;
     virtual void parsimUnpack(omnetpp::cCommBuffer *b) override;
 
     // field getter/setter methods
-    virtual int getSeq_Num() const;
-    virtual void setSeq_Num(int Seq_Num);
-    virtual int getM_Type() const;
-    virtual void setM_Type(int M_Type);
+    virtual int getSeq() const;
+    virtual void setSeq(int seq);
+    virtual int getAck() const;
+    virtual void setAck(int ack);
+    virtual int getType() const;
+    virtual void setType(int type);
+    virtual const char * getPayLoad() const;
+    virtual void setPayLoad(const char * payLoad);
     virtual int getDst() const;
     virtual void setDst(int dst);
-    virtual const char * getM_Payload() const;
-    virtual void setM_Payload(const char * M_Payload);
     virtual bits& getMycheckbits();
     virtual const bits& getMycheckbits() const {return const_cast<MyMessage_Base*>(this)->getMycheckbits();}
     virtual void setMycheckbits(const bits& mycheckbits);

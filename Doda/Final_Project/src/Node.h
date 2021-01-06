@@ -27,8 +27,25 @@ class Node : public cSimpleModule
 {
   int peer = -1;
   protected:
-    virtual void initialize();
-    virtual void handleMessage(cMessage *msg);
+  int nextFrameToSend;
+  int ackExpected;
+  int frameExpected;
+  int nBuffered;
+  int maxSequenceNumber;
+  std::string *buffer;
+  bool capped;
+  float *timers;
+  bool started;
+  float maxWaitTime;
+  bool timedOut;
+  bool resetFlag;
+  virtual void initialize();
+  virtual void handleMessage(cMessage *msg);
+  void reset();
+  bool between(int a, int b, int c);
+  void send_data(int frameNum, int frameExpected);
+  int inc_circular(int x);
+
 };
 
 #endif

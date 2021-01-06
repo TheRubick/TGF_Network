@@ -24,7 +24,7 @@ int timerInterval;
 
 void Hub::initialize()
 {
-    MyMessage_Base* timer = new MyMessage_Base("timer");
+    //MyMessage_Base* timer = new MyMessage_Base("timer");
     double interval = exponential(1 / par("lambda").doubleValue());
     scheduleAt(simTime() + interval , new cMessage(""));
     //scheduleAt(simTime() + 30, timer);
@@ -43,27 +43,38 @@ void Hub::handleMessage(cMessage *msg)
         MyMessage_Base* start_msg1 = new MyMessage_Base("start sender");
         MyMessage_Base* start_msg2 = new MyMessage_Base("start receiver");
         start_msg1->setDst(node2);
+        start_msg1->setType(3);
         start_msg2->setDst(node1);
+        start_msg2->setType(3);
         send(start_msg1, "outs", node1); // send to the first node to ask it to start sending
         send(start_msg2, "outs", node2); // send to the second node to ask it to start receiving
     }else{
             counter++;
             EV << "Counter:"<< counter;
             if (counter == timerInterval) {
-                /*MyMessage_Base* end_msg = new MyMessage_Base("stop");
-                send(end_msg, "outs", node1); // send to the first node to ask it to stop sending
-                send(end_msg, "outs", node2); // send to the second node to ask it to stop sending*/
 
-                node1 = uniform(0, par("n").intValue()-1);
+                MyMessage_Base* end_msg = new MyMessage_Base("stop");
+                MyMessage_Base* end_msg0 = new MyMessage_Base("stop");
+                end_msg->setType(4);
+                end_msg0->setType(4);
+                send(end_msg, "outs", node1); // send to the first node to ask it to stop sending
+                send(end_msg0, "outs", node2); // send to the second node to ask it to stop sending
+                int oldn1 = node1;
+                int oldn2 = node2;
+                do { //Avoid choosing node1 again
+                    node1 = uniform(0, par("n").intValue()-1);
+                } while(node1 == oldn1 || node1 == oldn2);
 
                 do { //Avoid choosing node1 again
                      node2 = uniform(0, par("n").intValue()-1);
-                } while(node2 == node1);
+                } while(node2 == node1 || node2 == oldn1 || node2 == oldn2);
 
                 MyMessage_Base* start_msg1 = new MyMessage_Base("start sender");
                 MyMessage_Base* start_msg2 = new MyMessage_Base("start receiver");
                 start_msg1->setDst(node2);
+                start_msg1->setType(3);
                 start_msg2->setDst(node1);
+                start_msg2->setType(3);
                 send(start_msg1, "outs", node1); // send to the first node to ask it to start sending
                 send(start_msg2, "outs", node2); // send to the second node to ask it to start receiving
                 timerInterval = uniform(5, 10);
@@ -73,8 +84,11 @@ void Hub::handleMessage(cMessage *msg)
             }else{
                 // message from one of the nodes
                 MyMessage_Base *mmsg = check_and_cast<MyMessage_Base *>(msg);
-                EV << "Hub dst:::::::::"<< mmsg->getDst();
-                send(mmsg, "outs", mmsg->getDst());
+                int dest = mmsg->getDst();
+                if(dest == node1 || dest == node2){
+                    EV << "Hub dst:::::::::"<< mmsg->getDst();
+                    send(mmsg, "outs", mmsg->getDst());
+                }
             }
     }
 

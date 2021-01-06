@@ -179,8 +179,9 @@ inline std::ostream& operator<<(std::ostream& out, const std::vector<T,A>& vec)
 
 MyMessage_Base::MyMessage_Base(const char *name, short kind) : ::omnetpp::cPacket(name,kind)
 {
-    this->Seq_Num = 0;
-    this->M_Type = 0;
+    this->seq = 0;
+    this->ack = 0;
+    this->type = 0;
     this->dst = 0;
 }
 
@@ -203,51 +204,74 @@ MyMessage_Base& MyMessage_Base::operator=(const MyMessage_Base& other)
 
 void MyMessage_Base::copy(const MyMessage_Base& other)
 {
-    this->Seq_Num = other.Seq_Num;
-    this->M_Type = other.M_Type;
+    this->seq = other.seq;
+    this->ack = other.ack;
+    this->type = other.type;
+    this->payLoad = other.payLoad;
     this->dst = other.dst;
-    this->M_Payload = other.M_Payload;
     this->mycheckbits = other.mycheckbits;
 }
 
 void MyMessage_Base::parsimPack(omnetpp::cCommBuffer *b) const
 {
     ::omnetpp::cPacket::parsimPack(b);
-    doParsimPacking(b,this->Seq_Num);
-    doParsimPacking(b,this->M_Type);
+    doParsimPacking(b,this->seq);
+    doParsimPacking(b,this->ack);
+    doParsimPacking(b,this->type);
+    doParsimPacking(b,this->payLoad);
     doParsimPacking(b,this->dst);
-    doParsimPacking(b,this->M_Payload);
     doParsimPacking(b,this->mycheckbits);
 }
 
 void MyMessage_Base::parsimUnpack(omnetpp::cCommBuffer *b)
 {
     ::omnetpp::cPacket::parsimUnpack(b);
-    doParsimUnpacking(b,this->Seq_Num);
-    doParsimUnpacking(b,this->M_Type);
+    doParsimUnpacking(b,this->seq);
+    doParsimUnpacking(b,this->ack);
+    doParsimUnpacking(b,this->type);
+    doParsimUnpacking(b,this->payLoad);
     doParsimUnpacking(b,this->dst);
-    doParsimUnpacking(b,this->M_Payload);
     doParsimUnpacking(b,this->mycheckbits);
 }
 
-int MyMessage_Base::getSeq_Num() const
+int MyMessage_Base::getSeq() const
 {
-    return this->Seq_Num;
+    return this->seq;
 }
 
-void MyMessage_Base::setSeq_Num(int Seq_Num)
+void MyMessage_Base::setSeq(int seq)
 {
-    this->Seq_Num = Seq_Num;
+    this->seq = seq;
 }
 
-int MyMessage_Base::getM_Type() const
+int MyMessage_Base::getAck() const
 {
-    return this->M_Type;
+    return this->ack;
 }
 
-void MyMessage_Base::setM_Type(int M_Type)
+void MyMessage_Base::setAck(int ack)
 {
-    this->M_Type = M_Type;
+    this->ack = ack;
+}
+
+int MyMessage_Base::getType() const
+{
+    return this->type;
+}
+
+void MyMessage_Base::setType(int type)
+{
+    this->type = type;
+}
+
+const char * MyMessage_Base::getPayLoad() const
+{
+    return this->payLoad.c_str();
+}
+
+void MyMessage_Base::setPayLoad(const char * payLoad)
+{
+    this->payLoad = payLoad;
 }
 
 int MyMessage_Base::getDst() const
@@ -258,16 +282,6 @@ int MyMessage_Base::getDst() const
 void MyMessage_Base::setDst(int dst)
 {
     this->dst = dst;
-}
-
-const char * MyMessage_Base::getM_Payload() const
-{
-    return this->M_Payload.c_str();
-}
-
-void MyMessage_Base::setM_Payload(const char * M_Payload)
-{
-    this->M_Payload = M_Payload;
 }
 
 bits& MyMessage_Base::getMycheckbits()
@@ -346,7 +360,7 @@ const char *MyMessageDescriptor::getProperty(const char *propertyname) const
 int MyMessageDescriptor::getFieldCount() const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
-    return basedesc ? 5+basedesc->getFieldCount() : 5;
+    return basedesc ? 6+basedesc->getFieldCount() : 6;
 }
 
 unsigned int MyMessageDescriptor::getFieldTypeFlags(int field) const
@@ -362,9 +376,10 @@ unsigned int MyMessageDescriptor::getFieldTypeFlags(int field) const
         FD_ISEDITABLE,
         FD_ISEDITABLE,
         FD_ISEDITABLE,
+        FD_ISEDITABLE,
         FD_ISCOMPOUND,
     };
-    return (field>=0 && field<5) ? fieldTypeFlags[field] : 0;
+    return (field>=0 && field<6) ? fieldTypeFlags[field] : 0;
 }
 
 const char *MyMessageDescriptor::getFieldName(int field) const
@@ -376,24 +391,26 @@ const char *MyMessageDescriptor::getFieldName(int field) const
         field -= basedesc->getFieldCount();
     }
     static const char *fieldNames[] = {
-        "Seq_Num",
-        "M_Type",
+        "seq",
+        "ack",
+        "type",
+        "payLoad",
         "dst",
-        "M_Payload",
         "mycheckbits",
     };
-    return (field>=0 && field<5) ? fieldNames[field] : nullptr;
+    return (field>=0 && field<6) ? fieldNames[field] : nullptr;
 }
 
 int MyMessageDescriptor::findField(const char *fieldName) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     int base = basedesc ? basedesc->getFieldCount() : 0;
-    if (fieldName[0]=='S' && strcmp(fieldName, "Seq_Num")==0) return base+0;
-    if (fieldName[0]=='M' && strcmp(fieldName, "M_Type")==0) return base+1;
-    if (fieldName[0]=='d' && strcmp(fieldName, "dst")==0) return base+2;
-    if (fieldName[0]=='M' && strcmp(fieldName, "M_Payload")==0) return base+3;
-    if (fieldName[0]=='m' && strcmp(fieldName, "mycheckbits")==0) return base+4;
+    if (fieldName[0]=='s' && strcmp(fieldName, "seq")==0) return base+0;
+    if (fieldName[0]=='a' && strcmp(fieldName, "ack")==0) return base+1;
+    if (fieldName[0]=='t' && strcmp(fieldName, "type")==0) return base+2;
+    if (fieldName[0]=='p' && strcmp(fieldName, "payLoad")==0) return base+3;
+    if (fieldName[0]=='d' && strcmp(fieldName, "dst")==0) return base+4;
+    if (fieldName[0]=='m' && strcmp(fieldName, "mycheckbits")==0) return base+5;
     return basedesc ? basedesc->findField(fieldName) : -1;
 }
 
@@ -410,9 +427,10 @@ const char *MyMessageDescriptor::getFieldTypeString(int field) const
         "int",
         "int",
         "string",
+        "int",
         "bits",
     };
-    return (field>=0 && field<5) ? fieldTypeStrings[field] : nullptr;
+    return (field>=0 && field<6) ? fieldTypeStrings[field] : nullptr;
 }
 
 const char **MyMessageDescriptor::getFieldPropertyNames(int field) const
@@ -479,11 +497,12 @@ std::string MyMessageDescriptor::getFieldValueAsString(void *object, int field, 
     }
     MyMessage_Base *pp = (MyMessage_Base *)object; (void)pp;
     switch (field) {
-        case 0: return long2string(pp->getSeq_Num());
-        case 1: return long2string(pp->getM_Type());
-        case 2: return long2string(pp->getDst());
-        case 3: return oppstring2string(pp->getM_Payload());
-        //case 4: {std::stringstream out; out << pp->getMycheckbits(); return out.str();}
+        case 0: return long2string(pp->getSeq());
+        case 1: return long2string(pp->getAck());
+        case 2: return long2string(pp->getType());
+        case 3: return oppstring2string(pp->getPayLoad());
+        case 4: return long2string(pp->getDst());
+        case 5: return  pp->getMycheckbits().to_string();
         default: return "";
     }
 }
@@ -498,10 +517,11 @@ bool MyMessageDescriptor::setFieldValueAsString(void *object, int field, int i, 
     }
     MyMessage_Base *pp = (MyMessage_Base *)object; (void)pp;
     switch (field) {
-        case 0: pp->setSeq_Num(string2long(value)); return true;
-        case 1: pp->setM_Type(string2long(value)); return true;
-        case 2: pp->setDst(string2long(value)); return true;
-        case 3: pp->setM_Payload((value)); return true;
+        case 0: pp->setSeq(string2long(value)); return true;
+        case 1: pp->setAck(string2long(value)); return true;
+        case 2: pp->setType(string2long(value)); return true;
+        case 3: pp->setPayLoad((value)); return true;
+        case 4: pp->setDst(string2long(value)); return true;
         default: return false;
     }
 }
@@ -515,7 +535,7 @@ const char *MyMessageDescriptor::getFieldStructName(int field) const
         field -= basedesc->getFieldCount();
     }
     switch (field) {
-        case 4: return omnetpp::opp_typename(typeid(bits));
+        case 5: return omnetpp::opp_typename(typeid(bits));
         default: return nullptr;
     };
 }
@@ -530,7 +550,7 @@ void *MyMessageDescriptor::getFieldStructValuePointer(void *object, int field, i
     }
     MyMessage_Base *pp = (MyMessage_Base *)object; (void)pp;
     switch (field) {
-        case 4: return (void *)(&pp->getMycheckbits()); break;
+        case 5: return (void *)(&pp->getMycheckbits()); break;
         default: return nullptr;
     }
 }
