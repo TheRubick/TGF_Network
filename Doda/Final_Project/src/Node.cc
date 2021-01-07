@@ -74,7 +74,9 @@ void Node::reset() {
     timers = new float[maxSequenceNumber + 1];
     started = false;
     timedOut = false;
-    maxWaitTime = 10.0;
+    maxWaitTime = par("timeOut").doubleValue();
+    selfMsgDelay = par("selfMsgDelay").doubleValue();
+    selfTimeOutEventDelay = par("selfTimeOutEventDelay").doubleValue();
     peer = -1;
     resetFlag = true;
     msgNum = 0;
@@ -96,7 +98,9 @@ void Node::initialize() {
     timers = new float[maxSequenceNumber + 1];
     started = false;
     timedOut = false;
-    maxWaitTime = 10.0;
+    maxWaitTime = par("timeOut").doubleValue();
+    selfMsgDelay = par("selfMsgDelay").doubleValue();
+    selfTimeOutEventDelay = par("selfTimeOutEventDelay").doubleValue();
     resetFlag = false;
     msgNum = 0;
     nodeNumber = 0;
@@ -129,7 +133,7 @@ void Node::handleMessage(cMessage *msg) {
 
             MyMessage_Base *selfMsg = new MyMessage_Base("");
             selfMsg->setType(0); //self msg type 0 means send data to other node
-            scheduleAt(simTime() + 2, selfMsg);
+            scheduleAt(simTime() + selfMsgDelay, selfMsg);
 
         } else if (mmsg->getType() == 1) {    //self message to indicate timeout
             EV << " From node = " << getName() << " timed out\n";
@@ -153,7 +157,7 @@ void Node::handleMessage(cMessage *msg) {
             resetFlag = false;
             MyMessage_Base *msg = new MyMessage_Base("");
             msg->setType(0);     //self msg type 0 means send data to other node
-            scheduleAt(simTime() + 2, msg);
+            scheduleAt(simTime() + selfMsgDelay, msg);
         } else if (mmsg->getType() == 4) {       //from hub to stop transmission
             Node::reset();
         } else if (resetFlag == false) {            //msg from other node
@@ -193,7 +197,7 @@ void Node::handleMessage(cMessage *msg) {
             timeoutMsg->setType(1);      //self msg type 1 means time out on ack
             timedOut = true;
             EV<<"Time out event"<<endl;
-            scheduleAt(simTime() + 1, timeoutMsg);
+            scheduleAt(simTime() + selfTimeOutEventDelay, timeoutMsg);
         }
     }
     if(resetFlag == false){

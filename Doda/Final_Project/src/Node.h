@@ -43,6 +43,8 @@ class Node : public cSimpleModule
   bool capped;
   float *timers;
   bool started;
+  float selfMsgDelay;
+  float selfTimeOutEventDelay;
   float maxWaitTime;
   bool timedOut;
   bool resetFlag;
