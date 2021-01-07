@@ -371,18 +371,25 @@ string Node::hammingCode(string binMsg)
         }
     }
 
+    //initialize the flag
+    string flag = "01111110";
     //assign the codedBinMsg with the temp
-    codedBinMsg = temp;
+    codedBinMsg = flag + temp + flag;
     return codedBinMsg;
 }
 
 string Node::hammingDecode(string codedBinMsg)
 {
-    int r = int(ceil(log2(codedBinMsg.length()+1))), //initialize r "redundant bits count"
-    n = codedBinMsg.length(); //initialize n with the codedBinMsg length
     string bitToInvert = "", //bitToInvert will hold the index of the single bit error
     binMsg = "", //will hold the binMsg to be returned "after removing the hamming code"
-    temp = codedBinMsg; //initialize temp variable with codedBinMsg
+    temp = ""; //initialize temp variable with codedBinMsg
+    //remove the flags from the message
+    for(int i = 8;i < codedBinMsg.length()-8;i++)
+        temp += codedBinMsg[i];
+    
+    codedBinMsg = temp;
+    int r = int(ceil(log2(codedBinMsg.length()+1))), //initialize r "redundant bits count"
+    n = codedBinMsg.length(); //initialize n with the codedBinMsg length
     /*
         for each bit from the redundant bits , recalculate it with the message bits that corresponds to it by xoring them
     */
