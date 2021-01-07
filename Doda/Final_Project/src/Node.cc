@@ -238,7 +238,7 @@ void Node::createFile() {
 
     //initialize the message number randomly
     //cout << 5+(10*nodeNumber)<< " " << 40+(10*nodeNumber) << endl;
-    msgNum = uniform(5+(10*nodeNumber), 40+(10*nodeNumber)); //to be defined in the node.h
+    msgNum = uniform(5 + (10 * nodeNumber), 40 + (10 * nodeNumber)); //to be defined in the node.h
     // Write to the file
     for (int i = 0; i < msgNum; i++)
         MyFile << Node::randomMsg() + "\n";
@@ -252,10 +252,11 @@ void Node::noiseModelling(MyMessage_Base *message) {
 
     std::string payload = message->getPayLoad();
 
+    int rand = uniform(0, 1) * 10;
+
     if (errorType == 1) {
         // Modification
 
-        int rand = uniform(0, 1) * 10;
         EV << "\n rand =  " << std::to_string(rand) << endl;
 
         int modRate = par("modRate").intValue();
@@ -264,13 +265,12 @@ void Node::noiseModelling(MyMessage_Base *message) {
                 {
             // choose which bit to modify
             int bitNumber = uniform(0, payload.size() - 1);
-            EV << "\n sender will corrupt a bit at  " << std::to_string(bitNumber)<<endl;
+            EV << "\n sender will corrupt a bit at  "
+                      << std::to_string(bitNumber) << endl;
 
-            if(payload[bitNumber] == '0')
-            {
+            if (payload[bitNumber] == '0') {
                 payload[bitNumber] = '1';
-            }
-            else{
+            } else {
                 payload[bitNumber] = '0';
             }
 
@@ -283,7 +283,13 @@ void Node::noiseModelling(MyMessage_Base *message) {
     } else if (errorType == 2) {
         // loss
 
-        EV << "\n msg is lost  ..\n";
+        int lossRate = par("lossRate").intValue();
+
+        if (rand > lossRate) {
+            EV << "\n msg is lost  ..\n";
+        } else {
+            send(message, "out");
+        }
 
     }
 
@@ -292,81 +298,81 @@ void Node::noiseModelling(MyMessage_Base *message) {
 
         send(message, "out");
         MyMessage_Base *msgSender2 = message->dup();
-        send(msgSender2, "out");
-        EV << "\n msg is sent twice   ..\n";
+        int dupRate = par("dupRate").intValue();
+
+        if (rand > dupRate) {
+            send(msgSender2, "out");
+            EV << "\n msg is sent twice   ..\n";
+        }
 
     }
 
     else if (errorType == 4) {
         // delayed
 
+        int delayRate = par("delayRate").intValue();
 
-        double delay = uniform(0, 1);
-        double inputDelay = par("delay").doubleValue();
-        if (inputDelay != 0.0) {
-            delay = inputDelay;
+        if (rand > delayRate) {
+            double delay = uniform(0, 1);
+            double inputDelay = par("delay").doubleValue();
+            if (inputDelay != 0.0) {
+                delay = inputDelay;
+            }
+            EV << "\n msg is delayed with " << delay << " secs ..\n";
+            sendDelayed(message, delay, "out");
+        } else {
+            send(message, "out");
         }
-        EV << "\n msg is delayed with " << delay << " secs ..\n";
-
-        sendDelayed(message, delay, "out");
 
     }
 
-
 }
 //////////////////////////////////////////////////////////////////////
-string Node::hammingCode(string binMsg)
-{
+string Node::hammingCode(string binMsg) {
     //initialize r "redundant bits count" with 0
     int r = 0;
     //loop till we get the satisfies the following equation : 2**r >= (m + r + 1)
-    while(!(pow(2,r) >= (binMsg.length() + r + 1)))
-    {
+    while (!(pow(2, r) >= (binMsg.length() + r + 1))) {
         r++;
-        if(pow(2,r) - 1 >= INT_MAX) // in case it reached the overflow
+        if (pow(2, r) - 1 >= INT_MAX) // in case it reached the overflow
             return ""; //means the hamming code failed
     }
 
     //initialize n to be the message bits + redundant bits
     int n = binMsg.length() + r;
 
-    string temp = "",//initialize temp variable
-    codedBinMsg = "";//initialize codedBinMsg which will hold the result
-    for(int i = 1,m = 0,ri = 0;i <= n;i++)
-    {
+    string temp = "", //initialize temp variable
+            codedBinMsg = ""; //initialize codedBinMsg which will hold the result
+    for (int i = 1, m = 0, ri = 0; i <= n; i++) {
         /*
-            in case that i is base of 2 i.e. i = 2,4,8,16,... then initialize it with zero
-            otherwise initialize the temp variable with the message bit
-        */
-        if(pow(2,ri) == i)
-        {
+         in case that i is base of 2 i.e. i = 2,4,8,16,... then initialize it with zero
+         otherwise initialize the temp variable with the message bit
+         */
+        if (pow(2, ri) == i) {
             //increment the redundant bits counter
             ri++;
             //initialize redundant bits with zero
             temp += '0';
-        }
-        else{
+        } else {
             temp += binMsg[m];
             //increment the message bits counter
             m++;
         }
     }
     /*
-        for each bit from the redundant bits , recalculate it with the message bits that corresponds to it by xoring them
-    */
-    for(int ri = 0;ri < r;ri++)
-    {
+     for each bit from the redundant bits , recalculate it with the message bits that corresponds to it by xoring them
+     */
+    for (int ri = 0; ri < r; ri++) {
         //riIndex variable to indicate the current redundant bit
-        int riIndex = int(pow(2,ri)) - 1;
-        for(int i = 1;i <= n;i++)
-        {
+        int riIndex = int(pow(2, ri)) - 1;
+        for (int i = 1; i <= n; i++) {
             //if the iterator i is the same as the current redundant bit then skip it
-            if(int(pow(2,ri)) == i)
+            if (int(pow(2, ri)) == i)
                 continue;
-            if((int(pow(2,ri)) & i) == int(pow(2,ri)))
-            {
-                int riValue = bitset<1>(temp[riIndex]).to_ulong() ^ bitset<1>(temp[i-1]).to_ulong();
-                temp[int(pow(2,ri)) - 1] = riValue == 0 ? '0' : '1';
+            if ((int(pow(2, ri)) & i) == int(pow(2, ri))) {
+                int riValue = bitset<1>(temp[riIndex]).to_ulong()
+                        ^ bitset<1>(temp[i - 1]).to_ulong();
+                temp[int(pow(2, ri)) - 1] = riValue == 0 ? '0' : '1';
             }
         }
     }
@@ -378,38 +384,36 @@ string Node::hammingCode(string binMsg)
     return codedBinMsg;
 }
 
-string Node::hammingDecode(string codedBinMsg)
-{
+string Node::hammingDecode(string codedBinMsg) {
     string bitToInvert = "", //bitToInvert will hold the index of the single bit error
-    binMsg = "", //will hold the binMsg to be returned "after removing the hamming code"
-    temp = ""; //initialize temp variable with codedBinMsg
+            binMsg = "", //will hold the binMsg to be returned "after removing the hamming code"
+            temp = ""; //initialize temp variable with codedBinMsg
     //remove the flags from the message
-    for(int i = 8;i < codedBinMsg.length()-8;i++)
+    for (int i = 8; i < codedBinMsg.length() - 8; i++)
         temp += codedBinMsg[i];
-    
+
     codedBinMsg = temp;
-    int r = int(ceil(log2(codedBinMsg.length()+1))), //initialize r "redundant bits count"
+    int r = int(ceil(log2(codedBinMsg.length() + 1))), //initialize r "redundant bits count"
     n = codedBinMsg.length(); //initialize n with the codedBinMsg length
     /*
-        for each bit from the redundant bits , recalculate it with the message bits that corresponds to it by xoring them
-    */
-    for(int ri = 0;ri < r;ri++)
-    {
+     for each bit from the redundant bits , recalculate it with the message bits that corresponds to it by xoring them
+     */
+    for (int ri = 0; ri < r; ri++) {
         //riIndex variable to indicate the current redundant bit
-        int riIndex = int(pow(2,ri)) - 1;
-        for(int i = 1;i <= n;i++)
-        {
+        int riIndex = int(pow(2, ri)) - 1;
+        for (int i = 1; i <= n; i++) {
             //if the iterator i is the same as the current redundant bit then skip it
-            if(int(pow(2,ri)) == i)
+            if (int(pow(2, ri)) == i)
                 continue;
-            if((int(pow(2,ri)) & i) == int(pow(2,ri)))
-            {
-                int riValue = bitset<1>(temp[riIndex]).to_ulong() ^ bitset<1>(temp[i-1]).to_ulong();
-                temp[int(pow(2,ri)) - 1] = riValue == 0 ? '0' : '1';
+            if ((int(pow(2, ri)) & i) == int(pow(2, ri))) {
+                int riValue = bitset<1>(temp[riIndex]).to_ulong()
+                        ^ bitset<1>(temp[i - 1]).to_ulong();
+                temp[int(pow(2, ri)) - 1] = riValue == 0 ? '0' : '1';
             }
         }
         //xor the redundant bit with itself
-        int riValue = bitset<1>(temp[riIndex]).to_ulong() ^ bitset<1>(temp[riIndex]).to_ulong();
+        int riValue = bitset<1>(temp[riIndex]).to_ulong()
+                ^ bitset<1>(temp[riIndex]).to_ulong();
         temp[riIndex] = riValue == 0 ? '0' : '1';
         //add the calculated values of the redundant bits to bitToInvert
         bitToInvert += temp[riIndex];
@@ -417,59 +421,51 @@ string Node::hammingDecode(string codedBinMsg)
 
     //convert string bitToInvert to invertIndex
     int invertIndex = 0;
-    for(int i = 0;i < bitToInvert.length();i++)
-        invertIndex += int(pow(2,i)*bitset<1>(bitToInvert[i]).to_ulong());
+    for (int i = 0; i < bitToInvert.length(); i++)
+        invertIndex += int(pow(2, i) * bitset<1>(bitToInvert[i]).to_ulong());
 
     //if invertIndex > 0 means there is a single bit should be inverted
-    if( invertIndex > 0)
-    {
+    if (invertIndex > 0) {
         /*
-            if the bits is '1' flip it to zero and vice versa
-        */
-        if(temp[invertIndex - 1] == '1')
+         if the bits is '1' flip it to zero and vice versa
+         */
+        if (temp[invertIndex - 1] == '1')
             temp[invertIndex - 1] = '0';
         else
             temp[invertIndex - 1] = '1';
     }
 
     //assign binMsg with the message bits only i.e. without the redundant bits
-    for(int i = 1,ri = 0;i <= n;i++)
-    {
-        if(int(pow(2,ri)) == i)
-        {
+    for (int i = 1, ri = 0; i <= n; i++) {
+        if (int(pow(2, ri)) == i) {
             ri++;
-        }
-        else
-        {
+        } else {
             binMsg += temp[i - 1];
         }
     }
     return binMsg;
 }
 
-string Node::framingMsg(string Msg)
-{
+string Node::framingMsg(string Msg) {
     string binMsg = "";
     //convert the string to binary
-    for(int i = 0;i < Msg.length();i++)
+    for (int i = 0; i < Msg.length(); i++)
         binMsg += bitset<8>(Msg[i]).to_string();
 
     //initialize counter to indicate any sequence of five 1s
     int counter = 0;
     //initialize a temp variable
     string temp = "";
-    for(int i = 0;i < binMsg.length();i++)
-    {
+    for (int i = 0; i < binMsg.length(); i++) {
         temp += binMsg[i];
-        if(binMsg[i] == '1')
+        if (binMsg[i] == '1')
             counter++;
-        else if(binMsg[i] == '0')
+        else if (binMsg[i] == '0')
             counter = 0;
-        if (counter == 5)
-        {
+        if (counter == 5) {
             /*
-                in case there is five sequence of 1s then add zero
-            */
+             in case there is five sequence of 1s then add zero
+             */
             //reset the counter
             counter = 0;
             //add zero charachter to the temp string
@@ -482,24 +478,21 @@ string Node::framingMsg(string Msg)
     return binMsg;
 }
 
-string Node::deframingMsg(string binMsg)
-{
+string Node::deframingMsg(string binMsg) {
     //initialize counter to indicate any sequence of five 1s
     int counter = 0;
     //initialize the Msg that would hold the string converted from binMsg
     string Msg = "";
-    for(int i = 0;i < binMsg.length();i++)
-    {
+    for (int i = 0; i < binMsg.length(); i++) {
         Msg += binMsg[i];
-        if(binMsg[i] == '1')
+        if (binMsg[i] == '1')
             counter++;
-        else if(binMsg[i] == '0')
+        else if (binMsg[i] == '0')
             counter = 0;
-        if (counter == 5)
-        {
+        if (counter == 5) {
             /*
-                in case there is five sequence of 1s then skip adding the next charachter
-            */
+             in case there is five sequence of 1s then skip adding the next charachter
+             */
             //reset the counter
             counter = 0;
             //increment the iterator to make it pass the zero charachter
@@ -508,10 +501,9 @@ string Node::deframingMsg(string binMsg)
     }
     //initialize temp variable to store the characters of the message
     string temp = "";
-    for(int i = 0;i < Msg.length();i+=8)
-    {
+    for (int i = 0; i < Msg.length(); i += 8) {
         string letter = "";
-        for(int j = i;j < i+8;j++)
+        for (int j = i; j < i + 8; j++)
             letter += Msg[j];
         //convert each 8 bits "1 byte" sequence into character and add it to temp variable
         temp += char(bitset<8>(letter).to_ulong());
@@ -520,9 +512,6 @@ string Node::deframingMsg(string binMsg)
     Msg = temp;
     return Msg;
 }
-
-
-
 
 ///////////////////////////////////////////////////
 

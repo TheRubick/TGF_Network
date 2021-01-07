@@ -22,6 +22,10 @@ simple Node
 {
     parameters:
         int modRate = default(7);
+        int lossRate = default(6);
+        int delayRate = default(6);
+        int dupRate = default(6);
+        
         double delay = default(0.0);
         int n = default(4);
     gates:
