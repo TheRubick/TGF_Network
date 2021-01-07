@@ -75,13 +75,13 @@ class Node : public cSimpleModule
   //increment in circular way
   int inc_circular(int x);
   ////files
-  //check if there is no more messeges in the file
+  //check if there is no more messages in the file
   bool isFileFinished();
-  //create file of messeges to send
+  //create file of messages to send
   void createFile();
   //read a message from the file to send it
   std::string readLine();
-  //create random messeage (utility for creat file method)
+  //create random message (utility for create file method)
   std::string randomMsg();
   ///framing and hamming code
   string hammingCode(string binMsg);
