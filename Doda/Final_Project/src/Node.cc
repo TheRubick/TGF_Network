@@ -291,7 +291,7 @@ void Node::noiseModelling(MyMessage_Base *message) {
 
         int lossRate = par("lossRate").intValue();
 
-        if (true) {
+        if (rand > lossRate) {
             EV << "\n msg is lost  ..\n";
         } else {
             send(message, "out");
