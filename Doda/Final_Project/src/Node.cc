@@ -52,8 +52,8 @@ void Node::send_data(int frameNum, int frameAck) {
     //send(msg, "out");
 
     EV << " seq no = " << std::to_string(frameNum);
-    EV << " with ack = " << std::to_string(ack);
-    EV << " and msg = " << buffer[frameNum];
+    EV << " with ack = " << std::to_string(ack)<<"\n";
+
 }
 
 int Node::inc_circular(int x) {
@@ -108,23 +108,29 @@ void Node::handleMessage(cMessage *msg) {
     MyMessage_Base *mmsg = check_and_cast<MyMessage_Base*>(msg);
     // TODO - Generated method body
     //self msg either to cont working or time out
-    if (mmsg->isSelfMessage()) {    //self message
+    if (mmsg->isSelfMessage() && resetFlag == false) {    //self message
         if (mmsg->getType() == 0) {    ///self msg to send data
-            if (capped == false && resetFlag == false) { //sender buffer have available space
+            if (capped == false) { //sender buffer have available space
             //std::string c = "seq number = "+std::to_string(nextFrameToSend);//msg to be sent
+                if(isFileFinished()){
+                    MyMessage_Base *msgToHub = new MyMessage_Base("");
+                    msgToHub->setType(7);
+                    send(msgToHub,"out");
+                }
+                else{
+                    std::string c = Node::readLine();
+                    buffer[nextFrameToSend] = c;
+                    nBuffered++;
+                    Node::send_data(nextFrameToSend, frameExpected);
+                    nextFrameToSend = Node::inc_circular(nextFrameToSend);
+                    started = true;
+                }
+            }
 
-                std::string c = Node::readLine();
-                buffer[nextFrameToSend] = c;
-                nBuffered++;
-                Node::send_data(nextFrameToSend, frameExpected);
-                nextFrameToSend = Node::inc_circular(nextFrameToSend);
-                started = true;
-            }
-            if (resetFlag == false) {
-                MyMessage_Base *selfMsg = new MyMessage_Base("");
-                selfMsg->setType(0); //self msg type 0 means send data to other node
-                scheduleAt(simTime() + 2, selfMsg);
-            }
+            MyMessage_Base *selfMsg = new MyMessage_Base("");
+            selfMsg->setType(0); //self msg type 0 means send data to other node
+            scheduleAt(simTime() + 2, selfMsg);
+
         } else if (mmsg->getType() == 1) {    //self message to indicate timeout
             EV << " From node = " << getName() << " timed out\n";
             timedOut = false;
@@ -180,21 +186,23 @@ void Node::handleMessage(cMessage *msg) {
 
         }
     }
-    if (started) {    //check for time out TODO may need to check for reset flag
+    if (started && resetFlag == false) {    //check for time out TODO may need to check for reset flag
         if (((simTime().dbl() - timers[ackExpected]) > maxWaitTime)
                 && timedOut == false) {            //if timed out
             MyMessage_Base *timeoutMsg = new MyMessage_Base("");
             timeoutMsg->setType(1);      //self msg type 1 means time out on ack
             timedOut = true;
+            EV<<"Time out event"<<endl;
             scheduleAt(simTime() + 1, timeoutMsg);
         }
     }
-    if (nBuffered < maxSequenceNumber) { //todo may need to check for reset flag
-        capped = false;
-    } else {
-        capped = true;
+    if(resetFlag == false){
+        if (nBuffered < maxSequenceNumber) { //todo may need to check for reset flag
+            capped = false;
+        } else {
+            capped = true;
+        }
     }
-
     EV << " From node = " << getName();
     EV << " nextFrameToSend = " << std::to_string(nextFrameToSend);
     EV << " ackExpected = " << std::to_string(ackExpected);
@@ -251,7 +259,7 @@ void Node::createFile() {
 
 void Node::noiseModelling(MyMessage_Base *message) {
     int errorType = uniform(1, 4);
-    errorType = 2;
+    //errorType = 4;
     std::string payload = message->getPayLoad();
 
     int rand = uniform(0, 1) * 10;
