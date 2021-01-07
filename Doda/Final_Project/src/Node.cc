@@ -68,15 +68,15 @@ void Node::reset() {
     ackExpected = 0;
     frameExpected = 0;
     nBuffered = 0;
-    maxSequenceNumber = 7;
-    buffer = new std::string[maxSequenceNumber + 1];
+    //maxSequenceNumber = par("maxSequenceNumber").intValue();
+    //buffer = new std::string[maxSequenceNumber + 1];
     capped = false;
-    timers = new float[maxSequenceNumber + 1];
+    //timers = new float[maxSequenceNumber + 1];
     started = false;
     timedOut = false;
-    maxWaitTime = par("timeOut").doubleValue();
-    selfMsgDelay = par("selfMsgDelay").doubleValue();
-    selfTimeOutEventDelay = par("selfTimeOutEventDelay").doubleValue();
+    //maxWaitTime = par("timeOut").doubleValue();
+    //selfMsgDelay = par("selfMsgDelay").doubleValue();
+    //selfTimeOutEventDelay = par("selfTimeOutEventDelay").doubleValue();
     peer = -1;
     resetFlag = true;
     msgNum = 0;
@@ -92,7 +92,7 @@ void Node::initialize() {
     ackExpected = 0;
     frameExpected = 0;
     nBuffered = 0;
-    maxSequenceNumber = 7;
+    maxSequenceNumber = par("maxSequenceNumber").intValue();
     buffer = new std::string[maxSequenceNumber + 1];
     capped = false;
     timers = new float[maxSequenceNumber + 1];
@@ -106,6 +106,10 @@ void Node::initialize() {
     nodeNumber = 0;
     fileName = "";
     currentMsg = 0;
+    generatedFrames = 0;
+    lostFrames = 0;
+    retransmittedFrames = 0;
+    duplicatedFrames = 0;
 }
 
 void Node::handleMessage(cMessage *msg) {
@@ -126,6 +130,7 @@ void Node::handleMessage(cMessage *msg) {
                     buffer[nextFrameToSend] = c;
                     nBuffered++;
                     Node::send_data(nextFrameToSend, frameExpected);
+                    generatedFrames++;
                     nextFrameToSend = Node::inc_circular(nextFrameToSend);
                     started = true;
                 }
@@ -141,6 +146,7 @@ void Node::handleMessage(cMessage *msg) {
             nextFrameToSend = ackExpected;
             for (int i = 0; i < nBuffered; i++) {
                 Node::send_data(nextFrameToSend, frameExpected);
+                retransmittedFrames++;
                 nextFrameToSend = Node::inc_circular(nextFrameToSend);
             }
         }
@@ -305,6 +311,7 @@ void Node::noiseModelling(MyMessage_Base *message) {
 
         if (rand > lossRate) {
             EV << "\n msg is lost  ..\n";
+            lostFrames++;
         } else {
             send(message, "out");
         }
@@ -321,6 +328,7 @@ void Node::noiseModelling(MyMessage_Base *message) {
         if (rand > dupRate) {
             send(msgSender2, "out");
             EV << "\n msg is sent twice   ..\n";
+            duplicatedFrames++;
         }
 
     }
@@ -502,7 +510,7 @@ string Node::framingMsg(string Msg) {
 }
 
 string Node::deframingMsg(string binMsg) {
-    //initialize counter to indicate any sequence of five 1s
+    //initialize counter to indicatedummy any sequence of five 1s
     int counter = 0;
     //initialize the Msg that would hold the string converted from binMsg
     string Msg = "";
@@ -543,5 +551,16 @@ void Node::finish() {
         perror("Error deleting file");
     else
         puts("File successfully deleted");
+    recordScalar("Number of generated frames     = ",generatedFrames);
+    recordScalar("Number of lost frames          = ",lostFrames);
+    recordScalar("Number of retransmitted frames = ",retransmittedFrames);
+    double numerator = (double)(generatedFrames-lostFrames);
+    double denominator = (double)(generatedFrames-lostFrames+retransmittedFrames+duplicatedFrames);
+    double percentage = 0.0;
+    if (denominator != 0){
+        percentage = numerator/denominator;
+    }
+    recordScalar("Percentage of Useful Frames    = ",percentage);
+    recordScalar("/////////////////////////////////////////////////////////////////////////",0);
 }
 

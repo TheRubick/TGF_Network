@@ -30,6 +30,7 @@ simple Node
         double timeOut = default(10.0);
         double delay = default(0.0);
         int n = default(4);
+        int maxSequenceNumber = default(7);
     gates:
         input in;
         output out;

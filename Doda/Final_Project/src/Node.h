@@ -34,36 +34,54 @@ class Node : public cSimpleModule
 {
   int peer = -1;
   protected:
-  int nextFrameToSend;
-  int ackExpected;
-  int frameExpected;
-  int nBuffered;
+  //go back N
+  int nextFrameToSend;//receiver window pointer
+  int ackExpected;  //sender buffer window start
+  int frameExpected;//sender buffer window end
+  int nBuffered;//number of unacknowledged frames
   int maxSequenceNumber;
   std::string *buffer;
-  bool capped;
-  float *timers;
-  bool started;
-  float selfMsgDelay;
-  float selfTimeOutEventDelay;
-  float maxWaitTime;
-  bool timedOut;
-  bool resetFlag;
-  int msgNum;
-  int currentMsg;
-  int nodeNumber;
-  std::string fileName;
+  bool capped; //flag check if buffer is full
+  float *timers;//array for storing message sent time (used with time out)
+  bool started;//flag used with timeout
+  float selfMsgDelay;//delay added when using schedule
+  float selfTimeOutEventDelay;//delay added when using schedule for time out event
+  float maxWaitTime;//timer for time out
+  bool timedOut;//flag if time out event is created
+  bool resetFlag;//flag if reset received from hub
+  //////
+  //create files
+  int msgNum;//total number of messages in the file
+  int currentMsg;//current message in the file
+  int nodeNumber;//number of current node
+  std::string fileName;//name of the node's file
+  ///////statistics
+  int generatedFrames;//total number of generated frames
+  int lostFrames;//total number of lost frames
+  int retransmittedFrames;//total number of retransmittedframes
+  int duplicatedFrames;//total number of duplicated frames
+  ///////
   virtual void initialize();
   virtual void handleMessage(cMessage *msg);
+  //model channel noise
   void noiseModelling( MyMessage_Base * message);
   void finish();
+  //called when reset is received from hub
   void reset();
+  //to check if the received ack number is in the sender buffer
   bool between(int a, int b, int c);
+  //used to send frames
   void send_data(int frameNum, int frameExpected);
+  //increment in circular way
   int inc_circular(int x);
   ////files
+  //check if there is no more messeges in the file
   bool isFileFinished();
+  //create file of messeges to send
   void createFile();
+  //read a message from the file to send it
   std::string readLine();
+  //create random messeage (utility for creat file method)
   std::string randomMsg();
   ///framing and hamming code
   string hammingCode(string binMsg);
