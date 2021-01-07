@@ -124,6 +124,9 @@ void Node::handleMessage(cMessage *msg) {
                     MyMessage_Base *msgToHub = new MyMessage_Base("");
                     msgToHub->setType(7);
                     send(msgToHub,"out");
+                    EV<<"\n"<<"/////////////////////////////////////////////"<<endl;
+                    EV<<"      File have no more data"<<endl;
+                    EV<<"/////////////////////////////////////////////////"<<endl;
                 }
                 else{
                     std::string c = Node::readLine();
@@ -197,7 +200,7 @@ void Node::handleMessage(cMessage *msg) {
         }
     }
     if (started && resetFlag == false) {    //check for time out TODO may need to check for reset flag
-        if (((simTime().dbl() - timers[ackExpected]) > maxWaitTime)
+        if (((simTime().dbl() - timers[ackExpected]) > maxWaitTime && nBuffered > 0)
                 && timedOut == false) {            //if timed out
             MyMessage_Base *timeoutMsg = new MyMessage_Base("");
             timeoutMsg->setType(1);      //self msg type 1 means time out on ack
