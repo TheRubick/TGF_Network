@@ -170,7 +170,9 @@ void Node::handleMessage(cMessage *msg) {
                 if (mmsg->getSeq() == frameExpected) {
                     frameExpected = Node::inc_circular(frameExpected);
                     std::string m = mmsg->getPayLoad();
+                    EV << "before hamming decode " << m.c_str() << endl;
                     m = hammingDecode(m);
+                    EV << "before deframming " << deframingMsg(m) << endl;
                     m = deframingMsg(m);
                     bubble(m.c_str());
                 }
@@ -206,7 +208,7 @@ std::string Node::randomMsg() {
     int msgSize = uniform(10, 90);
     //initialize msg variable to hold the message
     string msg = "";
-    for (int i = 0; i < msgSize; i++)
+    for (int i = 0; i < 8;i++)//msgSize; i++)
         msg += char(uniform(65, 90)); //any character from the message would be chosen randomly from A to Z  character
     return msg;
 }
@@ -249,7 +251,7 @@ void Node::createFile() {
 
 void Node::noiseModelling(MyMessage_Base *message) {
     int errorType = uniform(1, 4);
-
+    errorType = 2;
     std::string payload = message->getPayLoad();
 
     int rand = uniform(0, 1) * 10;
@@ -260,6 +262,9 @@ void Node::noiseModelling(MyMessage_Base *message) {
         EV << "\n rand =  " << std::to_string(rand) << endl;
 
         int modRate = par("modRate").intValue();
+
+        EV << "before modification = " << payload << endl;
+        
 
         if (rand > modRate) // prob to corrupt a certain bit
                 {
@@ -276,6 +281,7 @@ void Node::noiseModelling(MyMessage_Base *message) {
 
         }
 
+        EV << "after modification =  " << payload << endl;
         message->setPayLoad(payload.c_str());
 
         send(message, "out");
@@ -285,7 +291,7 @@ void Node::noiseModelling(MyMessage_Base *message) {
 
         int lossRate = par("lossRate").intValue();
 
-        if (rand > lossRate) {
+        if (true) {
             EV << "\n msg is lost  ..\n";
         } else {
             send(message, "out");
@@ -384,6 +390,7 @@ string Node::hammingCode(string binMsg) {
     return codedBinMsg;
 }
 
+
 string Node::hammingDecode(string codedBinMsg) {
     string bitToInvert = "", //bitToInvert will hold the index of the single bit error
             binMsg = "", //will hold the binMsg to be returned "after removing the hamming code"
@@ -398,6 +405,7 @@ string Node::hammingDecode(string codedBinMsg) {
     /*
      for each bit from the redundant bits , recalculate it with the message bits that corresponds to it by xoring them
      */
+    
     for (int ri = 0; ri < r; ri++) {
         //riIndex variable to indicate the current redundant bit
         int riIndex = int(pow(2, ri)) - 1;
@@ -412,9 +420,9 @@ string Node::hammingDecode(string codedBinMsg) {
             }
         }
         //xor the redundant bit with itself
-        int riValue = bitset<1>(temp[riIndex]).to_ulong()
-                ^ bitset<1>(temp[riIndex]).to_ulong();
-        temp[riIndex] = riValue == 0 ? '0' : '1';
+        //int riValue = bitset<1>(temp[riIndex]).to_ulong()
+               // ^ bitset<1>(temp[riIndex]).to_ulong();
+        //temp[riIndex] = riValue == 0 ? '0' : '1';
         //add the calculated values of the redundant bits to bitToInvert
         bitToInvert += temp[riIndex];
     }
@@ -424,6 +432,7 @@ string Node::hammingDecode(string codedBinMsg) {
     for (int i = 0; i < bitToInvert.length(); i++)
         invertIndex += int(pow(2, i) * bitset<1>(bitToInvert[i]).to_ulong());
 
+    //EV << "bit error" << bitToInvert.length() << " " << bitToInvert << endl;
     //if invertIndex > 0 means there is a single bit should be inverted
     if (invertIndex > 0) {
         /*
@@ -445,6 +454,8 @@ string Node::hammingDecode(string codedBinMsg) {
     }
     return binMsg;
 }
+
+
 
 string Node::framingMsg(string Msg) {
     string binMsg = "";
