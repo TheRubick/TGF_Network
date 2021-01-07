@@ -1,3 +1,6 @@
+#include <fstream>
+#include <stdio.h>
+
 std::string Node::randomMsg()
 {
     /*
@@ -12,13 +15,7 @@ std::string Node::randomMsg()
     return msg;
 }
 
-#include <fstream>
 
-string Node::readLine()
-{
-    string line;
-    return line;
-}
 
 void Node::createFile()
 {
@@ -33,4 +30,43 @@ void Node::createFile()
 
     // Close the file
     MyFile.close();
+}
+
+
+std::string Node::readLine()
+{
+    // Create a text string, which is used to output the text file
+    string myText;
+
+    // Read from the text file
+    ifstream MyReadFile("node.txt");
+    
+    getline(MyReadFile, myText);
+  
+    // Close the file
+    MyReadFile.close(); 
+    return myText;
+}
+
+void Node::createFile()
+{
+    // Create and open a text file whose name is node number
+    ofstream MyFile("node.txt");
+
+    //initialize the message number randomly
+    msgNum = uniform(10,40); //to be defined in the node.h
+    // Write to the file
+    for(int i = 0;i < msgNum;i++)
+        MyFile << Node::randomMsg()+"\n";
+
+    // Close the file
+    MyFile.close();
+}
+
+void Node::final()
+{
+    if( remove( "node.txt" ) != 0 ) // TODO should be modified
+        perror( "Error deleting file" );
+    else
+        puts( "File successfully deleted" );
 }
