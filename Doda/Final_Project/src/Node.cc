@@ -216,7 +216,7 @@ std::string Node::randomMsg() {
     int msgSize = uniform(10, 90);
     //initialize msg variable to hold the message
     string msg = "";
-    for (int i = 0; i < 8;i++)//msgSize; i++)
+    for (int i = 0; i < msgSize; i++)
         msg += char(uniform(65, 90)); //any character from the message would be chosen randomly from A to Z  character
     return msg;
 }
