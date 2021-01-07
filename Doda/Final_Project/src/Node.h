@@ -40,6 +40,7 @@ class Node : public cSimpleModule
   bool timedOut;
   bool resetFlag;
   int msgNum;
+  int currentMsg;
   int nodeNumber;
   std::string fileName;
   virtual void initialize();
@@ -50,7 +51,7 @@ class Node : public cSimpleModule
   void send_data(int frameNum, int frameExpected);
   int inc_circular(int x);
   ////files
-
+  bool isFileFinished();
   void createFile();
   std::string readLine();
   std::string randomMsg();

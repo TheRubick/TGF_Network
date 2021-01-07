@@ -32,6 +32,11 @@ void Node::createFile()
     MyFile.close();
 }
 
+bool Node::isFileFinished()
+{
+    ifstream MyReadFile("node.txt");
+    return (MyReadFile.peek() != EOF);
+}
 
 std::string Node::readLine()
 {
