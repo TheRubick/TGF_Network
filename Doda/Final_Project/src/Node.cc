@@ -202,15 +202,12 @@ void Node::handleMessage(cMessage *msg) {
 }
 
 std::string Node::randomMsg() {
-    /*
-     lazem n3ml check 3ala 7etet enena n-read and write from/to files w nzbtoha gwa el Node.cc beta3t TGF
-     */
-    //initialize msgSize randomly to be any number from 10 to 200
-    int msgSize = uniform(10, 100);
+    //initialize msgSize randomly to be any number from 10 to 90
+    int msgSize = uniform(10, 90);
     //initialize msg variable to hold the message
     string msg = "";
     for (int i = 0; i < msgSize; i++)
-        msg += char(uniform(65, 122)); //any character from the message would be chosen randomly from ! to ~  character
+        msg += char(uniform(65, 90)); //any character from the message would be chosen randomly from A to Z  character
     return msg;
 }
 
@@ -240,7 +237,8 @@ void Node::createFile() {
     ofstream MyFile(fileName);
 
     //initialize the message number randomly
-    msgNum = uniform(10, 40); //to be defined in the node.h
+    //cout << 5+(10*nodeNumber)<< " " << 40+(10*nodeNumber) << endl;
+    msgNum = uniform(5+(10*nodeNumber), 40+(10*nodeNumber)); //to be defined in the node.h
     // Write to the file
     for (int i = 0; i < msgNum; i++)
         MyFile << Node::randomMsg() + "\n";
@@ -258,7 +256,7 @@ void Node::noiseModelling(MyMessage_Base *message) {
         // Modification
 
         int rand = uniform(0, 1) * 10;
-        EV << " rand =  " << std::to_string(rand) << endl;
+        EV << "\n rand =  " << std::to_string(rand) << endl;
 
         int modRate = par("modRate").intValue();
 
@@ -266,7 +264,7 @@ void Node::noiseModelling(MyMessage_Base *message) {
                 {
             // choose which bit to modify
             int bitNumber = uniform(0, payload.size() - 1);
-            EV << "sender will corrupt a bit at  " << std::to_string(bitNumber)<<endl;
+            EV << "\n sender will corrupt a bit at  " << std::to_string(bitNumber)<<endl;
 
             if(payload[bitNumber] == '0')
             {
@@ -285,7 +283,7 @@ void Node::noiseModelling(MyMessage_Base *message) {
     } else if (errorType == 2) {
         // loss
 
-        EV << " msg is lost  ..\n";
+        EV << "\n msg is lost  ..\n";
 
     }
 
@@ -295,7 +293,7 @@ void Node::noiseModelling(MyMessage_Base *message) {
         send(message, "out");
         MyMessage_Base *msgSender2 = message->dup();
         send(msgSender2, "out");
-        EV << " msg is sent twice   ..\n";
+        EV << "\n msg is sent twice   ..\n";
 
     }
 
@@ -308,7 +306,7 @@ void Node::noiseModelling(MyMessage_Base *message) {
         if (inputDelay != 0.0) {
             delay = inputDelay;
         }
-        EV << " msg is delayed with " << delay << " secs ..\n";
+        EV << "\n msg is delayed with " << delay << " secs ..\n";
 
         sendDelayed(message, delay, "out");
 
