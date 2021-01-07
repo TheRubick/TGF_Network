@@ -85,10 +85,34 @@ void Hub::handleMessage(cMessage *msg)
             }else{
                 // message from one of the nodes
                 MyMessage_Base *mmsg = check_and_cast<MyMessage_Base *>(msg);
-                int dest = mmsg->getDst();
-                if(dest == node1[indx] || dest == node2[indx]){
-                    EV << "Hub dst:::::::::"<< mmsg->getDst();
-                    send(mmsg, "outs", mmsg->getDst());
+                if(mmsg->getType() == 7){
+                    prevSimTime = simTime().dbl();
+                    MyMessage_Base* end_msg = new MyMessage_Base("stop");
+                    MyMessage_Base* end_msg0 = new MyMessage_Base("stop");
+                    end_msg->setType(4);
+                    end_msg0->setType(4);
+                    send(end_msg, "outs", node1[indx]); // send to the first node to ask it to stop sending
+                    send(end_msg0, "outs", node2[indx]); // send to the second node to ask it to stop sending
+                    indx++;
+                    if(indx == tableSize) indx = 0;
+                    MyMessage_Base* start_msg1 = new MyMessage_Base("start sender");
+                    MyMessage_Base* start_msg2 = new MyMessage_Base("start receiver");
+                    start_msg1->setDst(node2[indx]);
+                    start_msg1->setType(3);
+                    start_msg1->setPayLoad(std::to_string(node1[indx]).c_str());
+                    start_msg2->setDst(node1[indx]);
+                    start_msg2->setType(3);
+                    start_msg2->setPayLoad(std::to_string(node2[indx]).c_str());
+                    send(start_msg1, "outs", node1[indx]); // send to the first node to ask it to start sending
+                    send(start_msg2, "outs", node2[indx]); // send to the second node to ask it to start receiving
+
+                }
+                else{
+                    int dest = mmsg->getDst();
+                    if(dest == node1[indx] || dest == node2[indx]){
+                        EV << "Hub dst:::::::::"<< mmsg->getDst();
+                        send(mmsg, "outs", mmsg->getDst());
+                    }
                 }
             }
     }
