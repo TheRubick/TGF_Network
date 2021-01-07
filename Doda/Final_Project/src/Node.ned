@@ -20,6 +20,10 @@ package final_project;
 //
 simple Node
 {
+    parameters:
+        int modRate = default(7);
+        double delay = default(0.0);
+        int n = default(4);
     gates:
         input in;
         output out;

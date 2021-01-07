@@ -17,7 +17,9 @@
 #define __FINAL_PROJECT_NODE_H_
 
 #include <omnetpp.h>
-
+#include "MyMessage_m.h"
+#include <fstream>
+#include <stdio.h>
 using namespace omnetpp;
 
 /**
@@ -45,6 +47,7 @@ class Node : public cSimpleModule
   std::string fileName;
   virtual void initialize();
   virtual void handleMessage(cMessage *msg);
+  void noiseModelling( MyMessage_Base * message);
   void finish();
   void reset();
   bool between(int a, int b, int c);
