@@ -39,12 +39,21 @@ class Node : public cSimpleModule
   float maxWaitTime;
   bool timedOut;
   bool resetFlag;
+  int msgNum;
+  int nodeNumber;
+  std::string fileName;
   virtual void initialize();
   virtual void handleMessage(cMessage *msg);
+  void finish();
   void reset();
   bool between(int a, int b, int c);
   void send_data(int frameNum, int frameExpected);
   int inc_circular(int x);
+  ////files
+
+  void createFile();
+  std::string readLine();
+  std::string randomMsg();
 
 };
 

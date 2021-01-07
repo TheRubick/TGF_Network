@@ -27,8 +27,8 @@ double prevSimTime;
 
 void Hub::initialize()
 {
-    double interval = exponential(1 / par("lambda").doubleValue());
-    scheduleAt(simTime() + interval , new cMessage(""));
+    //double interval = exponential(1 / par("lambda").doubleValue());
+    scheduleAt(simTime() + .1 , new cMessage(""));
     int oldn1 = -1;
     int oldn2 = -1;
     prevSimTime = simTime().dbl();
@@ -53,8 +53,10 @@ void Hub::handleMessage(cMessage *msg)
         MyMessage_Base* start_msg2 = new MyMessage_Base("start receiver");
         start_msg1->setDst(node2[indx]);
         start_msg1->setType(3);
+        start_msg1->setPayLoad(std::to_string(node1[indx]).c_str());
         start_msg2->setDst(node1[indx]);
         start_msg2->setType(3);
+        start_msg2->setPayLoad(std::to_string(node2[indx]).c_str());
         send(start_msg1, "outs", node1[indx]); // send to the first node to ask it to start sending
         send(start_msg2, "outs", node2[indx]); // send to the second node to ask it to start receiving
     }else{
@@ -72,8 +74,10 @@ void Hub::handleMessage(cMessage *msg)
                 MyMessage_Base* start_msg2 = new MyMessage_Base("start receiver");
                 start_msg1->setDst(node2[indx]);
                 start_msg1->setType(3);
+                start_msg1->setPayLoad(std::to_string(node1[indx]).c_str());
                 start_msg2->setDst(node1[indx]);
                 start_msg2->setType(3);
+                start_msg2->setPayLoad(std::to_string(node2[indx]).c_str());
                 send(start_msg1, "outs", node1[indx]); // send to the first node to ask it to start sending
                 send(start_msg2, "outs", node2[indx]); // send to the second node to ask it to start receiving
 

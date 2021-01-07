@@ -15,7 +15,9 @@
 
 #include "Node.h"
 #include "MyMessage_m.h"
-
+#include <fstream>
+#include <stdio.h>
+using namespace std;
 Define_Module(Node);
 
 
@@ -29,6 +31,7 @@ bool Node::between(int a,int  b,int c){
 
 void Node::send_data(int frameNum, int frameAck){
     MyMessage_Base * msg = new MyMessage_Base("");
+
     if(frameNum == -1){
         msg->setType(1);//type 1 meens ack only without data
         msg->setPayLoad("");
@@ -36,6 +39,7 @@ void Node::send_data(int frameNum, int frameAck){
     else{
         msg->setType(0);//type 0 means data and ack
         msg->setPayLoad(buffer[frameNum].c_str());
+        EV<<" Sending Msg = "<<buffer[frameNum];
         float t =simTime().dbl();
         timers[frameNum] = t;
     }
@@ -44,8 +48,9 @@ void Node::send_data(int frameNum, int frameAck){
     msg->setAck(ack);
     msg->setDst(peer);
     send(msg,"out");
-    EV<<" From node = "<<getName();
-    EV<<" sending msg with seq no = "<<std::to_string(frameNum);
+
+
+    EV<<" seq no = "<<std::to_string(frameNum);
     EV<<" with ack = "<<std::to_string(ack);
     EV<<" and msg = "<<buffer[frameNum];
 }
@@ -71,6 +76,11 @@ void Node::reset(){
     maxWaitTime = 10.0;
     peer = -1;
     resetFlag = true;
+    msgNum = 0;
+    if( remove(fileName.c_str()) != 0 )
+        perror( "Error deleting file" );
+    else
+        puts( "File successfully deleted" );
 }
 
 void Node::initialize()
@@ -87,6 +97,9 @@ void Node::initialize()
     timedOut = false;
     maxWaitTime = 10.0;
     resetFlag = false;
+    msgNum = 0;
+    nodeNumber = 0;
+    fileName = "";
 }
 
 void Node::handleMessage(cMessage *msg)
@@ -97,7 +110,8 @@ void Node::handleMessage(cMessage *msg)
     if(mmsg->isSelfMessage()){//self message
         if(mmsg->getType() == 0){///self msg to send data
             if(capped == false && resetFlag == false){//sender buffer have available space
-                std::string c = "seq number = "+std::to_string(nextFrameToSend);//msg to be sent
+                //std::string c = "seq number = "+std::to_string(nextFrameToSend);//msg to be sent
+                std::string c = Node::readLine();
                 buffer[nextFrameToSend] = c;
                 nBuffered++;
                 Node::send_data(nextFrameToSend, frameExpected);
@@ -123,7 +137,12 @@ void Node::handleMessage(cMessage *msg)
     else{//if not self message
         if(mmsg->getType() == 3){//init from hub to start transmission
             //todo may need to call reset() here again
+            //get number of node to talk to
             peer = mmsg->getDst();
+            //get my number
+            nodeNumber = std::stoi(mmsg->getPayLoad());
+            //create file to use
+            Node::createFile();
             //intilaize by sending self message
             resetFlag = false;
             MyMessage_Base * msg = new MyMessage_Base("");
@@ -179,3 +198,67 @@ void Node::handleMessage(cMessage *msg)
     EV<<" frameExpected = "<<std::to_string(frameExpected);
 
 }
+
+
+
+std::string Node::randomMsg()
+{
+    /*
+        lazem n3ml check 3ala 7etet enena n-read and write from/to files w nzbtoha gwa el Node.cc beta3t TGF
+    */
+    //initialize msgSize randomly to be any number from 10 to 200
+    int msgSize = uniform(10,200);
+    //initialize msg variable to hold the message
+    string msg = "";
+    for(int i = 0;i < msgSize;i++)
+        msg += char(uniform(33,126)); //any character from the message would be chosen randomly from ! to ~  character
+    return msg;
+}
+
+
+
+
+
+std::string Node::readLine()
+{
+    // Create a text string, which is used to output the text file
+    string myText;
+
+    // Read from the text file
+    ifstream MyReadFile(fileName);
+
+    getline(MyReadFile, myText);
+
+    // Close the file
+    MyReadFile.close();
+    return myText;
+}
+
+void Node::createFile()
+{
+    // Create and open a text file whose name is node number
+    fileName = "node" + std::to_string(nodeNumber) + ".txt";
+    ofstream MyFile(fileName);
+
+    //initialize the message number randomly
+    msgNum = uniform(10,40); //to be defined in the node.h
+    // Write to the file
+    for(int i = 0;i < msgNum;i++)
+        MyFile << Node::randomMsg()+"\n";
+
+    // Close the file
+    MyFile.close();
+}
+
+
+void Node::finish()
+{
+    if( remove( fileName.c_str() ) != 0 ) // TODO should be modified
+        perror( "Error deleting file" );
+    else
+        puts( "File successfully deleted" );
+}
+
+
+
+
