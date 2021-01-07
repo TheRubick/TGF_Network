@@ -1,6 +1,8 @@
 ../out/gcc-debug/src/Node.o: Node.cc Node.h \
- /root/Desktop/college/4_th_year/Networks/omnetpp-5.6.2/include/omnetpp.h \
- MyMessage_m.h
+ /home/jimmy/omnetpp-5.6.2/include/omnetpp.h MyMessage_m.h
+
 Node.h:
-/root/Desktop/college/4_th_year/Networks/omnetpp-5.6.2/include/omnetpp.h:
+
+/home/jimmy/omnetpp-5.6.2/include/omnetpp.h:
+
 MyMessage_m.h:

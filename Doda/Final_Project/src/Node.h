@@ -21,7 +21,12 @@
 #include <fstream>
 #include <stdio.h>
 using namespace omnetpp;
-
+#include <iostream>
+#include <bitset>
+#include <string>
+#include <math.h>
+#include <climits>
+using namespace std;
 /**
  * TODO - Generated class
  */
@@ -58,6 +63,11 @@ class Node : public cSimpleModule
   void createFile();
   std::string readLine();
   std::string randomMsg();
+  ///framing and hamming code
+  string hammingCode(string binMsg);
+  string hammingDecode(string codedBinMsg);
+  string framingMsg(string Msg);
+  string deframingMsg(string binMsg);
 
 };
 
