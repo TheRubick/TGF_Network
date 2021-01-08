@@ -26,6 +26,7 @@ using namespace omnetpp;
 #include <string>
 #include <math.h>
 #include <climits>
+#include <random>
 using namespace std;
 /**
  * TODO - Generated class
@@ -88,6 +89,7 @@ class Node : public cSimpleModule
   string hammingDecode(string codedBinMsg);
   string framingMsg(string Msg);
   string deframingMsg(string binMsg);
+  int generateRandom(int lowerRange, int UpperRange);
 
 };
 
