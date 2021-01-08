@@ -24,6 +24,16 @@ bool Node::between(int a, int b, int c) {
         return (false);
 }
 
+int Node::generateRandom(int lowerRange, int UpperRange) {
+    // return random integer between the given range
+    std::random_device rd; // obtain a random number from hardware
+    std::mt19937 gen(rd()); // seed the generator
+    std::uniform_int_distribution<> distr(lowerRange, UpperRange); // define the range
+    return distr(gen);
+}
+
+
+
 void Node::send_data(int frameNum, int frameAck) {
     MyMessage_Base *msg = new MyMessage_Base("");
 
@@ -271,11 +281,11 @@ void Node::createFile() {
 }
 
 void Node::noiseModelling(MyMessage_Base *message) {
-    int errorType = uniform(1, 4);
+    int errorType = generateRandom(1, 4);
     //errorType = 4;
     std::string payload = message->getPayLoad();
 
-    int rand = uniform(0, 1) * 10;
+    int rand = generateRandom(1,10);
 
     if (errorType == 1) {
         // Modification
@@ -290,7 +300,7 @@ void Node::noiseModelling(MyMessage_Base *message) {
         if (rand > modRate) // prob to corrupt a certain bit
                 {
             // choose which bit to modify
-            int bitNumber = uniform(0, payload.size() - 1);
+            int bitNumber = generateRandom(0, payload.size() - 1);
             EV << "\n sender will corrupt a bit at  "
                       << std::to_string(bitNumber) << endl;
 
@@ -342,7 +352,7 @@ void Node::noiseModelling(MyMessage_Base *message) {
         int delayRate = par("delayRate").intValue();
 
         if (rand > delayRate) {
-            double delay = uniform(0, 1);
+            double delay = generateRandom(0, 2);
             double inputDelay = par("delay").doubleValue();
             if (inputDelay != 0.0) {
                 delay = inputDelay;
