@@ -58,7 +58,7 @@ class Node : public cSimpleModule
   std::string fileName;//name of the node's file
   ///////statistics
   int generatedFrames;//total number of generated frames
-  int lostFrames;//total number of lost frames
+  int droppedFrames;//total number of dropped frames
   int retransmittedFrames;//total number of retransmittedframes
   int duplicatedFrames;//total number of duplicated frames
   ///////

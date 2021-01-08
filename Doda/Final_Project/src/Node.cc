@@ -117,7 +117,7 @@ void Node::initialize() {
     fileName = "";
     currentMsg = 0;
     generatedFrames = 0;
-    lostFrames = 0;
+    droppedFrames = 0;
     retransmittedFrames = 0;
     duplicatedFrames = 0;
 }
@@ -160,6 +160,7 @@ void Node::handleMessage(cMessage *msg) {
             for (int i = 0; i < nBuffered; i++) {
                 Node::send_data(nextFrameToSend, frameExpected);
                 retransmittedFrames++;
+                generatedFrames++;
                 nextFrameToSend = Node::inc_circular(nextFrameToSend);
             }
         }
@@ -204,6 +205,9 @@ void Node::handleMessage(cMessage *msg) {
                     EV << "before deframming " << deframingMsg(m) << endl;
                     m = deframingMsg(m);
                     bubble(m.c_str());
+                }
+                else{
+                    droppedFrames++;
                 }
             }
 
@@ -327,7 +331,7 @@ void Node::noiseModelling(MyMessage_Base *message) {
 
         if (rand > lossRate) {
             EV << "\n msg is lost  ..\n";
-            lostFrames++;
+
         } else {
             send(message, "out");
         }
@@ -568,10 +572,10 @@ void Node::finish() {
     else
         puts("File successfully deleted");
     recordScalar("Number of generated frames     = ",generatedFrames);
-    recordScalar("Number of lost frames          = ",lostFrames);
+    recordScalar("Number of dropped frames          = ",droppedFrames);
     recordScalar("Number of retransmitted frames = ",retransmittedFrames);
-    double numerator = (double)(generatedFrames-lostFrames);
-    double denominator = (double)(generatedFrames-lostFrames+retransmittedFrames+duplicatedFrames);
+    double numerator = (double)(generatedFrames-retransmittedFrames);
+    double denominator = (double)(generatedFrames);
     double percentage = 0.0;
     if (denominator != 0){
         percentage = numerator/denominator;
