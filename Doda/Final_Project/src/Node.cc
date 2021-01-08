@@ -236,11 +236,13 @@ void Node::handleMessage(cMessage *msg) {
 
 std::string Node::randomMsg() {
     //initialize msgSize randomly to be any number from 10 to 90
-    int msgSize = uniform(10, 90);
+    //int msgSize = uniform(10, 90);
     //initialize msg variable to hold the message
+    int msgSize = generateRandom(10,50);
     string msg = "";
     for (int i = 0; i < msgSize; i++)
-        msg += char(uniform(65, 90)); //any character from the message would be chosen randomly from A to Z  character
+        msg += char(generateRandom(65,90));
+        //msg += char(uniform(65, 90)); //any character from the message would be chosen randomly from A to Z  character
     return msg;
 }
 
@@ -271,7 +273,8 @@ void Node::createFile() {
 
     //initialize the message number randomly
     //cout << 5+(10*nodeNumber)<< " " << 40+(10*nodeNumber) << endl;
-    msgNum = uniform(5 + (10 * nodeNumber), 40 + (10 * nodeNumber)); //to be defined in the node.h
+    //msgNum = uniform(5 + (10 * nodeNumber), 40 + (10 * nodeNumber)); //to be defined in the node.h
+    msgNum = generateRandom(10,30);
     // Write to the file
     for (int i = 0; i < msgNum; i++)
         MyFile << Node::randomMsg() + "\n";

@@ -1,14 +1,14 @@
 version 2
-run General-0-20210108-18:40:04-12219
+run General-0-20210108-16:49:42-26429
 attr configname General
-attr datetime 20210108-18:40:04
+attr datetime 20210108-16:49:42
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars ""
 attr iterationvarsf ""
 attr measurement ""
 attr network final_project.Star
-attr processid 12219
+attr processid 26429
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -42,15 +42,15 @@ scalar Star.nodes[2] "Number of lost frames          = " 0
 scalar Star.nodes[2] "Number of retransmitted frames = " 0
 scalar Star.nodes[2] "Percentage of Useful Frames    = " 0
 scalar Star.nodes[2] ///////////////////////////////////////////////////////////////////////// 0
-scalar Star.nodes[3] "Number of generated frames     = " 7
-scalar Star.nodes[3] "Number of lost frames          = " 1
+scalar Star.nodes[3] "Number of generated frames     = " 1
+scalar Star.nodes[3] "Number of lost frames          = " 0
 scalar Star.nodes[3] "Number of retransmitted frames = " 0
-scalar Star.nodes[3] "Percentage of Useful Frames    = " 0.85714285714286
+scalar Star.nodes[3] "Percentage of Useful Frames    = " 1
 scalar Star.nodes[3] ///////////////////////////////////////////////////////////////////////// 0
-scalar Star.nodes[4] "Number of generated frames     = " 6
-scalar Star.nodes[4] "Number of lost frames          = " 1
+scalar Star.nodes[4] "Number of generated frames     = " 1
+scalar Star.nodes[4] "Number of lost frames          = " 0
 scalar Star.nodes[4] "Number of retransmitted frames = " 0
-scalar Star.nodes[4] "Percentage of Useful Frames    = " 0.83333333333333
+scalar Star.nodes[4] "Percentage of Useful Frames    = " 1
 scalar Star.nodes[4] ///////////////////////////////////////////////////////////////////////// 0
 scalar Star.nodes[5] "Number of generated frames     = " 0
 scalar Star.nodes[5] "Number of lost frames          = " 0
