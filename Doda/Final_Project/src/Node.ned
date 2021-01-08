@@ -25,9 +25,12 @@ simple Node
         int lossRate = default(6);
         int delayRate = default(6);
         int dupRate = default(6);
-        
+        double selfMsgDelay = default(2.0);
+        double selfTimeOutEventDelay = default(1.0);
+        double timeOut = default(10.0);
         double delay = default(0.0);
         int n = default(4);
+        int maxSequenceNumber = default(7);
     gates:
         input in;
         output out;

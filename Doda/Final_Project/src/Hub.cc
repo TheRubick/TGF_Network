@@ -22,7 +22,7 @@ int node1[10];
 int node2[10];
 int tableSize = 10;
 int indx = 0;
-int timerInterval = 15;
+int timerInterval = 30;
 double prevSimTime;
 
 

@@ -1,0 +1,65 @@
+version 2
+run General-0-20210108-01:37:13-53984
+attr configname General
+attr datetime 20210108-01:37:13
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars ""
+attr iterationvarsf ""
+attr measurement ""
+attr network final_project.Star
+attr processid 53984
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+param Star.n 7
+param Star.hubNode.lambda 0.1
+param Star.hubNode.n 7
+param Star.nodes[..].modRate 5
+param Star.nodes[..].lossRate 5
+param Star.nodes[..].delayRate 5
+param Star.nodes[..].dupRate 5
+param Star.nodes[..].delay 3
+param Star.nodes[..].selfMsgDelay 2.0
+param Star.nodes[..].selfTimeOutEventDelay 1.0
+param Star.nodes[..].timeOut 10.0
+param Star.nodes[..].maxSequenceNumber 7
+
+scalar Star.nodes[0] "Number of generated frames     = " 351
+scalar Star.nodes[0] "Number of lost frames          = " 46
+scalar Star.nodes[0] "Number of retransmitted frames = " 99
+scalar Star.nodes[0] "Percentage of Useful Frames    = " 0.66304347826087
+scalar Star.nodes[0] ///////////////////////////////////////////////////////////////////////// 0
+scalar Star.nodes[1] "Number of generated frames     = " 277
+scalar Star.nodes[1] "Number of lost frames          = " 49
+scalar Star.nodes[1] "Number of retransmitted frames = " 105
+scalar Star.nodes[1] "Percentage of Useful Frames    = " 0.58611825192802
+scalar Star.nodes[1] ///////////////////////////////////////////////////////////////////////// 0
+scalar Star.nodes[2] "Number of generated frames     = " 504
+scalar Star.nodes[2] "Number of lost frames          = " 118
+scalar Star.nodes[2] "Number of retransmitted frames = " 274
+scalar Star.nodes[2] "Percentage of Useful Frames    = " 0.51329787234043
+scalar Star.nodes[2] ///////////////////////////////////////////////////////////////////////// 0
+scalar Star.nodes[3] "Number of generated frames     = " 504
+scalar Star.nodes[3] "Number of lost frames          = " 112
+scalar Star.nodes[3] "Number of retransmitted frames = " 275
+scalar Star.nodes[3] "Percentage of Useful Frames    = " 0.51443569553806
+scalar Star.nodes[3] ///////////////////////////////////////////////////////////////////////// 0
+scalar Star.nodes[4] "Number of generated frames     = " 390
+scalar Star.nodes[4] "Number of lost frames          = " 69
+scalar Star.nodes[4] "Number of retransmitted frames = " 178
+scalar Star.nodes[4] "Percentage of Useful Frames    = " 0.55826086956522
+scalar Star.nodes[4] ///////////////////////////////////////////////////////////////////////// 0
+scalar Star.nodes[5] "Number of generated frames     = " 492
+scalar Star.nodes[5] "Number of lost frames          = " 102
+scalar Star.nodes[5] "Number of retransmitted frames = " 262
+scalar Star.nodes[5] "Percentage of Useful Frames    = " 0.50980392156863
+scalar Star.nodes[5] ///////////////////////////////////////////////////////////////////////// 0
+scalar Star.nodes[6] "Number of generated frames     = " 0
+scalar Star.nodes[6] "Number of lost frames          = " 0
+scalar Star.nodes[6] "Number of retransmitted frames = " 0
+scalar Star.nodes[6] "Percentage of Useful Frames    = " 0
+scalar Star.nodes[6] ///////////////////////////////////////////////////////////////////////// 0
+
