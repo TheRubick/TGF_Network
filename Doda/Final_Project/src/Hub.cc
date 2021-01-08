@@ -25,6 +25,7 @@ int indx = 0;
 int timerInterval = 15;
 double prevSimTime;
 
+
 void Hub::initialize()
 {
     //double interval = exponential(1 / par("lambda").doubleValue());
