@@ -17,7 +17,8 @@
 #define __FINAL_PROJECT_HUB_H_
 
 #include <omnetpp.h>
-
+#include <random>
+using namespace std;
 using namespace omnetpp;
 
 /**
@@ -28,6 +29,7 @@ class Hub : public cSimpleModule
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
+    int generateRandom(int lowerRange, int UpperRange);
 };
 
 #endif

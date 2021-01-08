@@ -35,11 +35,11 @@ void Hub::initialize()
     prevSimTime = simTime().dbl();
     for(int i =0; i<tableSize; i++){
         do { //Avoid choosing node1 again
-            node1[i] = uniform(0, par("n").intValue()-1);
+            node1[i] = generateRandom(0, par("n").intValue()-1);
         } while(node1[i] == oldn1 || node1[i] == oldn2);
 
         do { //Avoid choosing node1 again
-             node2[i] = uniform(0, par("n").intValue()-1);
+             node2[i] = generateRandom(0, par("n").intValue()-1);
         } while(node2[i] == node1[i] || node2[i] == oldn1 || node2[i] == oldn2);
         oldn1 = node1[i];
         oldn2 = node2[i];
@@ -118,4 +118,13 @@ void Hub::handleMessage(cMessage *msg)
             }
     }
 
+}
+
+
+int Hub::generateRandom(int lowerRange, int UpperRange) {
+    // return random integer between the given range
+    std::random_device rd; // obtain a random number from hardware
+    std::mt19937 gen(rd()); // seed the generator
+    std::uniform_int_distribution<> distr(lowerRange, UpperRange); // define the range
+    return distr(gen);
 }
