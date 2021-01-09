@@ -459,10 +459,6 @@ string Node::hammingDecode(string codedBinMsg) {
                 temp[int(pow(2, ri)) - 1] = riValue == 0 ? '0' : '1';
             }
         }
-        //xor the redundant bit with itself
-        //int riValue = bitset<1>(temp[riIndex]).to_ulong()
-               // ^ bitset<1>(temp[riIndex]).to_ulong();
-        //temp[riIndex] = riValue == 0 ? '0' : '1';
         //add the calculated values of the redundant bits to bitToInvert
         bitToInvert += temp[riIndex];
     }
@@ -472,7 +468,7 @@ string Node::hammingDecode(string codedBinMsg) {
     for (int i = 0; i < bitToInvert.length(); i++)
         invertIndex += int(pow(2, i) * bitset<1>(bitToInvert[i]).to_ulong());
 
-    //EV << "bit error" << bitToInvert.length() << " " << bitToInvert << endl;
+
     //if invertIndex > 0 means there is a single bit should be inverted
     if (invertIndex > 0) {
         /*
