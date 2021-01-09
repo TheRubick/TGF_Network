@@ -34,7 +34,6 @@ typedef std::bitset<8> bits;
  *     int type;
  *     string payLoad;
  *     int dst;
- *     bits mycheckbits;
  * }
  * </pre>
  *
@@ -70,7 +69,6 @@ class MyMessage_Base : public ::omnetpp::cPacket
     int type;
     ::omnetpp::opp_string payLoad;
     int dst;
-    bits mycheckbits;
 
   private:
     void copy(const MyMessage_Base& other);
@@ -85,10 +83,10 @@ class MyMessage_Base : public ::omnetpp::cPacket
 
   public:
     // make constructors protected to avoid instantiation
-        MyMessage_Base(const char *name=nullptr, short kind=0);
+       MyMessage_Base(const char *name=nullptr, short kind=0);
     virtual ~MyMessage_Base();
     virtual MyMessage_Base *dup() const override {
-            return new MyMessage_Base(*this); }
+                return new MyMessage_Base(*this); }
     virtual void parsimPack(omnetpp::cCommBuffer *b) const override;
     virtual void parsimUnpack(omnetpp::cCommBuffer *b) override;
 
@@ -103,9 +101,6 @@ class MyMessage_Base : public ::omnetpp::cPacket
     virtual void setPayLoad(const char * payLoad);
     virtual int getDst() const;
     virtual void setDst(int dst);
-    virtual bits& getMycheckbits();
-    virtual const bits& getMycheckbits() const {return const_cast<MyMessage_Base*>(this)->getMycheckbits();}
-    virtual void setMycheckbits(const bits& mycheckbits);
 };
 
 

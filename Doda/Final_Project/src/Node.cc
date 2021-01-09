@@ -563,6 +563,8 @@ string Node::deframingMsg(string binMsg) {
 ///////////////////////////////////////////////////
 
 void Node::finish() {
+    delete[] timers;
+    delete[] buffer;
     if (remove(fileName.c_str()) != 0) // TODO should be modified
         perror("Error deleting file");
     else
