@@ -32,5 +32,4 @@ packet MyMessage {
     int type;
     string payLoad;
     int dst;
-    bits mycheckbits;
 }

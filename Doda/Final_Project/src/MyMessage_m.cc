@@ -209,7 +209,6 @@ void MyMessage_Base::copy(const MyMessage_Base& other)
     this->type = other.type;
     this->payLoad = other.payLoad;
     this->dst = other.dst;
-    this->mycheckbits = other.mycheckbits;
 }
 
 void MyMessage_Base::parsimPack(omnetpp::cCommBuffer *b) const
@@ -220,7 +219,6 @@ void MyMessage_Base::parsimPack(omnetpp::cCommBuffer *b) const
     doParsimPacking(b,this->type);
     doParsimPacking(b,this->payLoad);
     doParsimPacking(b,this->dst);
-    doParsimPacking(b,this->mycheckbits);
 }
 
 void MyMessage_Base::parsimUnpack(omnetpp::cCommBuffer *b)
@@ -231,7 +229,6 @@ void MyMessage_Base::parsimUnpack(omnetpp::cCommBuffer *b)
     doParsimUnpacking(b,this->type);
     doParsimUnpacking(b,this->payLoad);
     doParsimUnpacking(b,this->dst);
-    doParsimUnpacking(b,this->mycheckbits);
 }
 
 int MyMessage_Base::getSeq() const
@@ -282,16 +279,6 @@ int MyMessage_Base::getDst() const
 void MyMessage_Base::setDst(int dst)
 {
     this->dst = dst;
-}
-
-bits& MyMessage_Base::getMycheckbits()
-{
-    return this->mycheckbits;
-}
-
-void MyMessage_Base::setMycheckbits(const bits& mycheckbits)
-{
-    this->mycheckbits = mycheckbits;
 }
 
 class MyMessageDescriptor : public omnetpp::cClassDescriptor
@@ -360,7 +347,7 @@ const char *MyMessageDescriptor::getProperty(const char *propertyname) const
 int MyMessageDescriptor::getFieldCount() const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
-    return basedesc ? 6+basedesc->getFieldCount() : 6;
+    return basedesc ? 5+basedesc->getFieldCount() : 5;
 }
 
 unsigned int MyMessageDescriptor::getFieldTypeFlags(int field) const
@@ -377,9 +364,8 @@ unsigned int MyMessageDescriptor::getFieldTypeFlags(int field) const
         FD_ISEDITABLE,
         FD_ISEDITABLE,
         FD_ISEDITABLE,
-        FD_ISCOMPOUND,
     };
-    return (field>=0 && field<6) ? fieldTypeFlags[field] : 0;
+    return (field>=0 && field<5) ? fieldTypeFlags[field] : 0;
 }
 
 const char *MyMessageDescriptor::getFieldName(int field) const
@@ -396,9 +382,8 @@ const char *MyMessageDescriptor::getFieldName(int field) const
         "type",
         "payLoad",
         "dst",
-        "mycheckbits",
     };
-    return (field>=0 && field<6) ? fieldNames[field] : nullptr;
+    return (field>=0 && field<5) ? fieldNames[field] : nullptr;
 }
 
 int MyMessageDescriptor::findField(const char *fieldName) const
@@ -410,7 +395,6 @@ int MyMessageDescriptor::findField(const char *fieldName) const
     if (fieldName[0]=='t' && strcmp(fieldName, "type")==0) return base+2;
     if (fieldName[0]=='p' && strcmp(fieldName, "payLoad")==0) return base+3;
     if (fieldName[0]=='d' && strcmp(fieldName, "dst")==0) return base+4;
-    if (fieldName[0]=='m' && strcmp(fieldName, "mycheckbits")==0) return base+5;
     return basedesc ? basedesc->findField(fieldName) : -1;
 }
 
@@ -428,9 +412,8 @@ const char *MyMessageDescriptor::getFieldTypeString(int field) const
         "int",
         "string",
         "int",
-        "bits",
     };
-    return (field>=0 && field<6) ? fieldTypeStrings[field] : nullptr;
+    return (field>=0 && field<5) ? fieldTypeStrings[field] : nullptr;
 }
 
 const char **MyMessageDescriptor::getFieldPropertyNames(int field) const
@@ -502,7 +485,6 @@ std::string MyMessageDescriptor::getFieldValueAsString(void *object, int field, 
         case 2: return long2string(pp->getType());
         case 3: return oppstring2string(pp->getPayLoad());
         case 4: return long2string(pp->getDst());
-        case 5: return  pp->getMycheckbits().to_string();
         default: return "";
     }
 }
@@ -535,7 +517,6 @@ const char *MyMessageDescriptor::getFieldStructName(int field) const
         field -= basedesc->getFieldCount();
     }
     switch (field) {
-        case 5: return omnetpp::opp_typename(typeid(bits));
         default: return nullptr;
     };
 }
@@ -550,7 +531,6 @@ void *MyMessageDescriptor::getFieldStructValuePointer(void *object, int field, i
     }
     MyMessage_Base *pp = (MyMessage_Base *)object; (void)pp;
     switch (field) {
-        case 5: return (void *)(&pp->getMycheckbits()); break;
         default: return nullptr;
     }
 }

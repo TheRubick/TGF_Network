@@ -1,14 +1,14 @@
 version 2
-run General-0-20210108-18:49:48-25794
+run General-0-20210109-21:22:32-10328
 attr configname General
-attr datetime 20210108-18:49:48
+attr datetime 20210109-21:22:32
 attr experiment General
 attr inifile omnetpp.ini
 attr iterationvars ""
 attr iterationvarsf ""
 attr measurement ""
 attr network final_project.Star
-attr processid 25794
+attr processid 10328
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -28,38 +28,38 @@ param Star.nodes[..].timeOut 10.0
 param Star.nodes[..].maxSequenceNumber 7
 
 scalar Star.nodes[0] "Number of generated frames     = " 0
-scalar Star.nodes[0] "Number of lost frames          = " 0
+scalar Star.nodes[0] "Number of dropped frames          = " 0
 scalar Star.nodes[0] "Number of retransmitted frames = " 0
 scalar Star.nodes[0] "Percentage of Useful Frames    = " 0
 scalar Star.nodes[0] ///////////////////////////////////////////////////////////////////////// 0
-scalar Star.nodes[1] "Number of generated frames     = " 0
-scalar Star.nodes[1] "Number of lost frames          = " 0
-scalar Star.nodes[1] "Number of retransmitted frames = " 0
-scalar Star.nodes[1] "Percentage of Useful Frames    = " 0
+scalar Star.nodes[1] "Number of generated frames     = " 23
+scalar Star.nodes[1] "Number of dropped frames          = " 5
+scalar Star.nodes[1] "Number of retransmitted frames = " 13
+scalar Star.nodes[1] "Percentage of Useful Frames    = " 0.43478260869565
 scalar Star.nodes[1] ///////////////////////////////////////////////////////////////////////// 0
-scalar Star.nodes[2] "Number of generated frames     = " 6
-scalar Star.nodes[2] "Number of lost frames          = " 2
+scalar Star.nodes[2] "Number of generated frames     = " 0
+scalar Star.nodes[2] "Number of dropped frames          = " 0
 scalar Star.nodes[2] "Number of retransmitted frames = " 0
-scalar Star.nodes[2] "Percentage of Useful Frames    = " 1
+scalar Star.nodes[2] "Percentage of Useful Frames    = " 0
 scalar Star.nodes[2] ///////////////////////////////////////////////////////////////////////// 0
 scalar Star.nodes[3] "Number of generated frames     = " 0
-scalar Star.nodes[3] "Number of lost frames          = " 0
+scalar Star.nodes[3] "Number of dropped frames          = " 0
 scalar Star.nodes[3] "Number of retransmitted frames = " 0
 scalar Star.nodes[3] "Percentage of Useful Frames    = " 0
 scalar Star.nodes[3] ///////////////////////////////////////////////////////////////////////// 0
-scalar Star.nodes[4] "Number of generated frames     = " 0
-scalar Star.nodes[4] "Number of lost frames          = " 0
-scalar Star.nodes[4] "Number of retransmitted frames = " 0
-scalar Star.nodes[4] "Percentage of Useful Frames    = " 0
+scalar Star.nodes[4] "Number of generated frames     = " 21
+scalar Star.nodes[4] "Number of dropped frames          = " 11
+scalar Star.nodes[4] "Number of retransmitted frames = " 6
+scalar Star.nodes[4] "Percentage of Useful Frames    = " 0.71428571428571
 scalar Star.nodes[4] ///////////////////////////////////////////////////////////////////////// 0
-scalar Star.nodes[5] "Number of generated frames     = " 0
-scalar Star.nodes[5] "Number of lost frames          = " 0
-scalar Star.nodes[5] "Number of retransmitted frames = " 0
-scalar Star.nodes[5] "Percentage of Useful Frames    = " 0
+scalar Star.nodes[5] "Number of generated frames     = " 21
+scalar Star.nodes[5] "Number of dropped frames          = " 10
+scalar Star.nodes[5] "Number of retransmitted frames = " 6
+scalar Star.nodes[5] "Percentage of Useful Frames    = " 0.71428571428571
 scalar Star.nodes[5] ///////////////////////////////////////////////////////////////////////// 0
-scalar Star.nodes[6] "Number of generated frames     = " 6
-scalar Star.nodes[6] "Number of lost frames          = " 2
-scalar Star.nodes[6] "Number of retransmitted frames = " 6
-scalar Star.nodes[6] "Percentage of Useful Frames    = " 0.36363636363636
+scalar Star.nodes[6] "Number of generated frames     = " 17
+scalar Star.nodes[6] "Number of dropped frames          = " 14
+scalar Star.nodes[6] "Number of retransmitted frames = " 0
+scalar Star.nodes[6] "Percentage of Useful Frames    = " 1
 scalar Star.nodes[6] ///////////////////////////////////////////////////////////////////////// 0
 
