@@ -13,25 +13,23 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-#ifndef __FINAL_PROJECT_HUB_H_
-#define __FINAL_PROJECT_HUB_H_
+//
+// TODO generated message class
+//
 
-#include <omnetpp.h>
-#include <random>
-#include<stdio.h>
-using namespace std;
-using namespace omnetpp;
+cplusplus{{
+#include <bitset>
+typedef std::bitset<8> bits;
+}}
 
-/**
- * TODO - Generated class
- */
-class Hub : public cSimpleModule
-{
-  protected:
-    virtual void initialize();
-    virtual void handleMessage(cMessage *msg);
-    int generateRandom(int lowerRange, int UpperRange);
-    void finish();
-};
 
-#endif
+class noncobject bits;
+
+packet MyMessage {
+    @customize(true);  // see the generated C++ header for more info
+	int seq;
+    int ack;
+    int type;
+    string payLoad;
+    int dst;
+}

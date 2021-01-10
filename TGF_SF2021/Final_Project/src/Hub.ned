@@ -13,25 +13,17 @@
 // along with this program.  If not, see http://www.gnu.org/licenses/.
 // 
 
-#ifndef __FINAL_PROJECT_HUB_H_
-#define __FINAL_PROJECT_HUB_H_
+package final_project;
 
-#include <omnetpp.h>
-#include <random>
-#include<stdio.h>
-using namespace std;
-using namespace omnetpp;
-
-/**
- * TODO - Generated class
- */
-class Hub : public cSimpleModule
+//
+// TODO auto-generated module
+//
+simple Hub
 {
-  protected:
-    virtual void initialize();
-    virtual void handleMessage(cMessage *msg);
-    int generateRandom(int lowerRange, int UpperRange);
-    void finish();
-};
-
-#endif
+    parameters:
+        int n = default(4);
+        double lambda = default(2.0);
+    gates:
+        input ins[];
+        output outs[];
+}

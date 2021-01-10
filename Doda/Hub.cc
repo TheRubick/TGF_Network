@@ -44,7 +44,6 @@ void Hub::initialize()
         oldn1 = node1[i];
         oldn2 = node2[i];
     }
-    freopen ("logs.txt","a",stdout);
 }
 
 void Hub::handleMessage(cMessage *msg)
@@ -61,9 +60,6 @@ void Hub::handleMessage(cMessage *msg)
         start_msg2->setPayLoad(std::to_string(node2[indx]).c_str());
         send(start_msg1, "outs", node1[indx]); // send to the first node to ask it to start sending
         send(start_msg2, "outs", node2[indx]); // send to the second node to ask it to start receiving
-        cout << "start new session \n";
-        cout << "node 1 = " << node1[indx] + 1 << endl;
-        cout << "node 2 = " << node2[indx] + 1<< endl;
     }
             else{
                 // message from one of the nodes
@@ -88,9 +84,7 @@ void Hub::handleMessage(cMessage *msg)
                     start_msg2->setPayLoad(std::to_string(node2[indx]).c_str());
                     send(start_msg1, "outs", node1[indx]); // send to the first node to ask it to start sending
                     send(start_msg2, "outs", node2[indx]); // send to the second node to ask it to start receiving
-                    cout << "start new session \n";
-                    cout << "node 1 = " << node1[indx] + 1 << endl;
-                    cout << "node 2 = " << node2[indx] + 1 << endl;
+
                 }
                 else{
                     int dest = mmsg->getDst();
@@ -102,15 +96,11 @@ void Hub::handleMessage(cMessage *msg)
             }
 }
 
+
 int Hub::generateRandom(int lowerRange, int UpperRange) {
     // return random integer between the given range
     std::random_device rd; // obtain a random number from hardware
     std::mt19937 gen(rd()); // seed the generator
     std::uniform_int_distribution<> distr(lowerRange, UpperRange); // define the range
     return distr(gen);
-}
-
-void Hub::finish()
-{
-    fclose(stdout);
 }
